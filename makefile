@@ -1,7 +1,7 @@
 
 COMPILER=g++
 LIBRARIES=-lglfw -lGLU -lGL
-SRCFILE=main.cpp
+SRCFILE=src/Main.cpp src/App.cpp
 BINFILE=main
 
 SRCDIR=src
@@ -9,4 +9,7 @@ OUTDIR=bin
 
 default:
 	mkdir -p $(OUTDIR)
-	$(COMPILER) $(LIBRARIES) $(SRCDIR)/$(SRCFILE) -o $(OUTDIR)/$(BINFILE)
+	$(COMPILER) $(LIBRARIES) $(SRCFILE) -o $(OUTDIR)/$(BINFILE)
+
+run:
+	$(OUTDIR)/$(BINFILE)
