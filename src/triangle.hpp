@@ -10,7 +10,7 @@ public:
     void Render();
 
 private:
-    Triangle(const Triangle& copy) {};
+    Triangle(const Triangle& copy) { (void)copy; };
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;

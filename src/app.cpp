@@ -67,14 +67,14 @@ bool App::Initialise() {
     this->m_cube = new Cube();
 
     this->m_uiProgramId = LoadShaders(
-        "SimpleVertexShader.vert",
-        "SimpleFragmentShader.frag"
+        "shaders/shader.vert",
+        "shaders/shader.frag"
     );
 
     return true;
 }
 
-bool App::CleanUp() {
+void App::CleanUp() {
     glDeleteProgram(this->m_uiProgramId);
 
     delete this->m_pkTriangle;
@@ -140,6 +140,9 @@ void App::Render() {
 }
 
 void App::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    (void)scancode;
+    (void)mods;
+
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }

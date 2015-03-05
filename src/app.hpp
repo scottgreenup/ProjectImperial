@@ -11,30 +11,30 @@ public:
     ~App();
 
     bool Initialise();
-    bool CleanUp();
+    void CleanUp();
 
     bool Update();
     void Render();
 
-    static void KeyCallback(class GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void KeyCallback(struct GLFWwindow* window, int key, int scancode, int action, int mods);
     static void ErrorCallback(int error, const char* desc);
 
     GLuint LoadShaders(const char* vertFilename, const char* fragFilename);
 
 private:
     App() {}
-    App(const App& copy) {};
+    App(const App& copy) { (void)copy; };
 
-    class GLFWwindow* window;
-
-    GLuint m_uiProgramId;
-
-    int m_WindowWidth;
-    int m_WindowHeight;
-    const char* m_WindowName;
+    struct GLFWwindow* window;
 
     class Triangle* m_pkTriangle;
     class Cube* m_cube;
+
+    GLuint m_uiProgramId;
+    int m_WindowWidth;
+    int m_WindowHeight;
+
+    const char* m_WindowName;
 };
 
 #endif

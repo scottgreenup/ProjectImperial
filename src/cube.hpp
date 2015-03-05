@@ -9,7 +9,7 @@ public:
     void Render();
 
 private:
-    Cube(const Cube& copy) {};
+    Cube(const Cube& copy) { (void)copy; };
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
