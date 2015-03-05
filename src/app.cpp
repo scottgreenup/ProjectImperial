@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "app.hpp"
-#include "polygon.hpp"
+#include "triangle.hpp"
 
 App::App(int width, int height, const char* name)
     : m_WindowWidth(width)
@@ -54,13 +54,13 @@ bool App::Initialise() {
         return false;
     }
 
-    glClearColor(0.1, 0.1, 0.1, 0.1);
+    glClearColor(0.1, 0.1, 0.1, 0.0);
 
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, App::KeyCallback);
     glfwSetErrorCallback(App::ErrorCallback);
 
-    this->m_pkTriangle = new Polygon();
+    this->m_pkTriangle = new Triangle();
 
     this->m_uiProgramId = LoadShaders(
         "SimpleVertexShader.vert",

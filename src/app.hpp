@@ -33,7 +33,7 @@ private:
     int m_WindowHeight;
     const char* m_WindowName;
 
-    class Polygon* m_pkTriangle;
+    class Triangle* m_pkTriangle;
 };
 
 #endif
