@@ -34,6 +34,7 @@ private:
     const char* m_WindowName;
 
     class Triangle* m_pkTriangle;
+    class Cube* m_cube;
 };
 
 #endif

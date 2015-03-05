@@ -14,6 +14,7 @@ private:
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
+    GLuint m_colorBufferId;
 };
 
 #endif

@@ -12,6 +12,7 @@
 
 #include "app.hpp"
 #include "triangle.hpp"
+#include "cube.hpp"
 
 App::App(int width, int height, const char* name)
     : m_WindowWidth(width)
@@ -55,12 +56,15 @@ bool App::Initialise() {
     }
 
     glClearColor(0.1, 0.1, 0.1, 0.0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     glfwSwapInterval(1);
     glfwSetKeyCallback(this->window, App::KeyCallback);
     glfwSetErrorCallback(App::ErrorCallback);
 
     this->m_pkTriangle = new Triangle();
+    this->m_cube = new Cube();
 
     this->m_uiProgramId = LoadShaders(
         "SimpleVertexShader.vert",
@@ -110,9 +114,12 @@ void App::Render() {
     glfwGetFramebufferSize(this->window, &width, &height);
     float ratio = width / (float) height;
 
+
+    float x = 5 * sinf(glfwGetTime() * 3.0f);
+
     glm::mat4 projection = glm::perspective(45.0f, ratio, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(
-        glm::vec3(0,5,-5), // pos
+        glm::vec3(x,5,-5), // pos
         glm::vec3(0,0,0), // look at
         glm::vec3(0,1,0)  // up
     );
@@ -120,13 +127,14 @@ void App::Render() {
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 mvp = projection * view * model;
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(this->m_uiProgramId);
 
     GLuint matrixId = glGetUniformLocation(this->m_uiProgramId, "MVP");
     glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
 
     this->m_pkTriangle->Render();
+    this->m_cube->Render();
 
     glfwSwapBuffers(window);
 }
