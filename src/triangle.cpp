@@ -11,7 +11,7 @@ Triangle::Triangle() {
 
     float cx = 0.0f;
     float cy = 0.0f;
-    float cz = 3.0f;
+    float cz = 0.0f;
 
     GLfloat verts[] = {
         cx - 1.0f, cy - 1.0f, cz + 0.0f,
@@ -19,11 +19,15 @@ Triangle::Triangle() {
         cx + 0.0f, cy + 1.0f, cz + 0.0f,
     };
 
-    GLfloat colors[] = {
-        1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f,
-    };
+    // generate the colors
+    const int vertices = 3;
+    GLfloat colors[vertices * 3];
+
+    for (int i = 0; i < vertices; ++i) {
+        colors[3 * i + 0] = sinf(i / (float)vertices);
+        colors[3 * i + 1] = cosf(i / (float)vertices);
+        colors[3 * i + 2] = i / (float)vertices;
+    }
 
     // generate 1 vertex array and store the name in m_vertexArrayId
     glGenVertexArrays(1, &this->m_vertexArrayId);

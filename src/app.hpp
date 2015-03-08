@@ -29,11 +29,10 @@ private:
 
     class Triangle* m_pkTriangle;
     class Cube* m_cube;
+    class Shader* m_simpleShader;
 
-    GLuint m_uiProgramId;
     int m_WindowWidth;
     int m_WindowHeight;
-
     const char* m_WindowName;
 };
 

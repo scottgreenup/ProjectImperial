@@ -1,7 +1,6 @@
 
 #include "app.hpp"
 
-
 int main(void)
 {
     App kApp(1920, 1080, "Hello World");
@@ -16,3 +15,4 @@ int main(void)
 
     return 0;
 }
+
