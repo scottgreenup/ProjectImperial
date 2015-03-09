@@ -5,8 +5,8 @@
 #include <cmath>
 #include <iostream>
 
-#include "color.hpp"
-#include "cube.hpp"
+#include "color.h"
+#include "cube.h"
 
 GLfloat verts[] = {
     -0.5f, -0.5f, -0.5f,

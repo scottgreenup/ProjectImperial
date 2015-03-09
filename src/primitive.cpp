@@ -7,11 +7,11 @@
 
 #include <iostream>
 
-#include "color.hpp"
+#include "color.h"
 
-#include "camera.hpp"
-#include "shader.hpp"
-#include "primitive.hpp"
+#include "camera.h"
+#include "shader.h"
+#include "primitive.h"
 
 Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
 : position(glm::vec3(0.0f))
@@ -55,7 +55,6 @@ Primitive::~Primitive() {
 void Primitive::Render() {
     // each triangle needs 3 verts and each vert needs 3 coordinates
     
-    int x = (1.0f + sinf(glfwGetTime()));
     const int vertices = 36;
     GLfloat colors[vertices * 3];
 
