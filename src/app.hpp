@@ -31,6 +31,8 @@ private:
     class Cube* m_cube;
     class Shader* m_simpleShader;
 
+    class Primitive* m_prim;
+
     int m_WindowWidth;
     int m_WindowHeight;
     const char* m_WindowName;

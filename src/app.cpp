@@ -1,4 +1,10 @@
 
+// create camera
+// window pointer
+// then make primitive
+// cube and triangle derive from primitve
+
+
 // http://www.opengl-tutorial.org/beginners-tutorials/tutorial-4-a-colored-cube/
 
 #include <cmath>
@@ -8,6 +14,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "app.hpp"
+
+#include "primitive.hpp"
+#include "camera.hpp"
 #include "shader.hpp"
 #include "triangle.hpp"
 #include "cube.hpp"
@@ -15,13 +24,9 @@
 App::App(int width, int height, const char* name)
     : m_WindowWidth(width)
     , m_WindowHeight(height)
-    , m_WindowName(name) {
+    , m_WindowName(name) { }
 
-}
-
-App::~App() {
-
-}
+App::~App() { }
 
 bool App::Initialise() {
     if (!glfwInit()) {
@@ -61,10 +66,6 @@ bool App::Initialise() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    // create our objects
-    this->m_pkTriangle = new Triangle();
-    this->m_cube = new Cube();
-
     // create our shaders
     this->m_simpleShader = new Shader(
         "shaders/shader.vert",
@@ -75,13 +76,50 @@ bool App::Initialise() {
         return false;
     }
 
+    int width = 0;
+    int height = 0;
+    glfwGetFramebufferSize(this->window, &width, &height);
+
+    Camera::Get()->SetProjectionMatrix(
+        45.0f, 
+        width / (float)height, 
+        0.1f, 
+        1000.f
+    );
+
+    float cx = 0.0f;
+    float cy = 0.0f;
+    float cz = 0.0f;
+
+    GLfloat verts[] = {
+        cx - 1.0f, cy - 1.0f, cz + 0.0f,
+        cx + 1.0f, cy - 1.0f, cz + 0.0f,
+        cx + 0.0f, cy + 1.0f, cz + 0.0f,
+    };
+
+    // generate the colors
+    const int vertices = 3;
+    GLfloat colors[vertices * 3];
+
+    for (int i = 0; i < vertices; ++i) {
+        colors[3 * i + 0] = sinf(i / (float)vertices);
+        colors[3 * i + 1] = cosf(i / (float)vertices);
+        colors[3 * i + 2] = i / (float)vertices;
+    }
+    this->m_prim = new Primitive(verts, colors, 3);
+    this->m_prim->AttachShader(this->m_simpleShader);
+
+    this->m_cube = new Cube();
+    this->m_cube->AttachShader(this->m_simpleShader);
+
     return true;
 }
 
 void App::CleanUp() {
     delete this->m_simpleShader;
+    delete this->m_prim;
     delete this->m_cube;
-    delete this->m_pkTriangle;
+    //delete this->m_pkTriangle;
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -97,41 +135,10 @@ bool App::Update() {
 }
 
 void App::Render() {
-    int width = 0;
-    int height = 0;
-    glfwGetFramebufferSize(this->window, &width, &height);
-    float ratio = width / (float) height;
-
-    float x = 5 * sinf(glfwGetTime() * 3.0f);
-
-    glm::mat4 projection = glm::perspective(45.0f, ratio, 0.1f, 1000.0f);
-    glm::mat4 view = glm::lookAt(
-        glm::vec3(x,5,-5), // pos
-        glm::vec3(0,0,0), // look at
-        glm::vec3(0,1,0)  // up
-    );
-
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 mvp;
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    this->m_simpleShader->Use();
-
-    GLuint matrixId = 0;
-
-    matrixId = glGetUniformLocation(this->m_simpleShader->Id(), "MVP");
-    model = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
-    mvp = projection * view * model;
-    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
-    this->m_pkTriangle->Render();
-
-    matrixId = glGetUniformLocation(this->m_simpleShader->Id(), "MVP");
-    model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    mvp = projection * view * model;
-    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
     this->m_cube->Render();
+    this->m_prim->Render();
 
     glfwSwapBuffers(window);
 }

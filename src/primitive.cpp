@@ -1,47 +1,31 @@
+
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <iostream>
 
-#include "triangle.hpp"
+#include "camera.hpp"
+#include "shader.hpp"
+#include "primitive.hpp"
 
-Triangle::Triangle() {
-    GLfloat verts[] = {
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         0.0f,  1.0f, 0.0f,
-    };
+Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount) {
 
-    // generate the colors
-    const int vertices = 3;
-    GLfloat colors[vertices * 3];
-
-    for (int i = 0; i < vertices; ++i) {
-        colors[3 * i + 0] = sinf(i / (float)vertices);
-        colors[3 * i + 1] = cosf(i / (float)vertices);
-        colors[3 * i + 2] = i / (float)vertices;
-    }
-
-    // generate 1 vertex array and store the name in m_vertexArrayId
+    // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
-
-    // bind to the vertex array with name from m_vertexArrayId
     glBindVertexArray(this->m_vertexArrayId);
 
-    // generate 1 buffer object and store the name in m_bufferId
+    // generate and use a VBO
     glGenBuffers(1, &this->m_bufferId);
-
-    // bind to the buffer object (BO) with name from m_bufferId
-    // m_bufferId is now bound to GL_ARRAY_BUFFER
-    // GL operations on the target (GL_ARRAY_BUFFER) affect the bound BO
     glBindBuffer(GL_ARRAY_BUFFER, this->m_bufferId);
 
     // create and initialise the BO's data store
     glBufferData(
         GL_ARRAY_BUFFER, // target
-        sizeof(verts),   // size
+        sizeof(GLfloat) * vertCount * 3,   // size
         verts,           // data
         GL_STATIC_DRAW   // how it will be used
     );
@@ -52,19 +36,29 @@ Triangle::Triangle() {
     glGenBuffers(1, &this->m_colorBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glBufferData(
-        GL_ARRAY_BUFFER, // target
-        sizeof(colors),   // size
-        colors,           // data
-        GL_STATIC_DRAW   // how it will be used
+        GL_ARRAY_BUFFER,
+        sizeof(GLfloat) * vertCount * 3,
+        colors,
+        GL_STATIC_DRAW
     );
 }
 
-Triangle::~Triangle() {
+Primitive::~Primitive() {
     glDeleteBuffers(1, &this->m_bufferId);
     glDeleteVertexArrays(1, &this->m_vertexArrayId);
 }
 
-void Triangle::Render() {
+void Primitive::Render() {
+    this->m_shader->Use();
+
+    GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
+    glm::mat4 projection = Camera::Get()->GetProjectionMatrix();
+    glm::mat4 view = Camera::Get()->GetViewMatrix();
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+
+    glm::mat4 mvp = projection * view * model;
+    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
+
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
 
@@ -84,17 +78,16 @@ void Triangle::Render() {
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glVertexAttribPointer(
-        1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void*)0
     );
 
-    // mode, first, count
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 12*3);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
-}
 
+}
