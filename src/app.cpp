@@ -14,19 +14,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "app.hpp"
+#include "app.h"
 
-#include "primitive.hpp"
-#include "camera.hpp"
-#include "shader.hpp"
-#include "triangle.hpp"
-#include "cube.hpp"
+#include "primitive.h"
+#include "camera.h"
+#include "shader.h"
+#include "cube.h"
 
 App::App(int width, int height, const char* name)
-    : m_WindowWidth(width)
+    : m_cubeCount(50)
+    , m_WindowWidth(width)
     , m_WindowHeight(height)
     , m_WindowName(name)
-    , m_cubeCount(50) { }
+{}
 
 App::~App() { }
 
@@ -43,7 +43,7 @@ bool App::Initialise() {
     this->window = glfwCreateWindow(
         this->m_WindowWidth,
         this->m_WindowHeight,
-        this->m_WindowName,
+        this->m_WindowName.c_str(),
         glfwGetPrimaryMonitor(),
         NULL
     );
@@ -89,32 +89,6 @@ bool App::Initialise() {
         1000.f
     );
 
-    float cx = 0.0f;
-    float cy = 0.0f;
-    float cz = 0.0f;
-
-    GLfloat verts[] = {
-        cx - 1.0f, cy - 1.0f, cz + 0.0f,
-        cx + 1.0f, cy - 1.0f, cz + 0.0f,
-        cx + 0.0f, cy + 1.0f, cz + 0.0f,
-    };
-
-    // generate the colors
-    const int vertices = 3;
-    GLfloat colors[vertices * 3];
-
-    for (int i = 0; i < vertices; ++i) {
-        colors[3 * i + 0] = sinf(i / (float)vertices);
-        colors[3 * i + 1] = cosf(i / (float)vertices);
-        colors[3 * i + 2] = i / (float)vertices;
-    }
-    this->m_prim = new Primitive(verts, colors, 3);
-    this->m_prim->AttachShader(this->m_simpleShader);
-
-    this->m_cube = new Cube();
-    this->m_cube->AttachShader(this->m_simpleShader);
-    this->m_cube->position = glm::vec3(0.0f, 2.0f, 0.0f);
-
     this->m_cubeGrid = new Cube*[m_cubeCount];
 
     for (int i = 0; i < m_cubeCount; i++) {
@@ -139,8 +113,6 @@ bool App::Initialise() {
 
 void App::CleanUp() {
     delete this->m_simpleShader;
-    delete this->m_prim;
-    delete this->m_cube;
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -154,18 +126,6 @@ bool App::Update() {
     m_prevTime = m_currTime;
     m_currTime = glfwGetTime();
     float dt = m_currTime - m_prevTime;
-
-    /*
-    this->m_cube->eulerAngles.z += 10.0f * dt;
-    this->m_cube->eulerAngles.x += 5.0f * dt;
-    // */
-    
-    //this->m_cube->eulerAngles.z = 45.0f;
-    this->m_cube->eulerAngles.x = 45.0f;
-
-    //this->m_cube->scale.x = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
-    //this->m_cube->scale.y = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
-    //this->m_cube->scale.z = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
     
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
@@ -188,17 +148,12 @@ bool App::Update() {
         }
     }
 
-
-
     glfwPollEvents();
     return true;
 }
 
 void App::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //this->m_cube->Render();
-    //this->m_prim->Render();
 
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {

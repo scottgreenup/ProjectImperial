@@ -1,5 +1,5 @@
 
-#include "color.hpp"
+#include "color.h"
 
 #include <cmath>
 

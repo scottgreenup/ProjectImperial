@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 class App {
 public:
     App(int width, int height, const char* name);
@@ -26,17 +28,13 @@ private:
     App(const App& copy) { (void)copy; };
 
     struct GLFWwindow* window;
-
-    class Primitive* m_prim;
-    class Cube* m_cube;
-    class Shader* m_simpleShader;
-
-    class Cube** m_cubeGrid;
-    int m_cubeCount;
-
     int m_WindowWidth;
     int m_WindowHeight;
-    const char* m_WindowName;
+    std::string m_WindowName;
+
+    class Shader* m_simpleShader;
+    class Cube** m_cubeGrid;
+    int m_cubeCount;
 
     float m_prevTime;
     float m_currTime;
