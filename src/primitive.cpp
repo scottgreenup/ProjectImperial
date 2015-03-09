@@ -53,8 +53,6 @@ Primitive::~Primitive() {
 }
 
 void Primitive::Render() {
-    // each triangle needs 3 verts and each vert needs 3 coordinates
-    
     const int vertices = 36;
     GLfloat colors[vertices * 3];
 

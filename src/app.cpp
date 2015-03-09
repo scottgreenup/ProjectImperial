@@ -148,8 +148,6 @@ bool App::Update() {
         }
     }
 
-
-
     glfwPollEvents();
     return true;
 }
