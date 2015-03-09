@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include "color.hpp"
+
 #include "camera.hpp"
 #include "shader.hpp"
 #include "primitive.hpp"
@@ -51,6 +53,35 @@ Primitive::~Primitive() {
 }
 
 void Primitive::Render() {
+    // each triangle needs 3 verts and each vert needs 3 coordinates
+    
+    int x = (1.0f + sinf(glfwGetTime()));
+    const int vertices = 36;
+    GLfloat colors[vertices * 3];
+
+    for (int i = 0; i < vertices; ++i) {
+        float r, g, b;
+        HSVtoRGB(
+            //(float)(x % 360) + (i / (float)vertices * 360.0f), 
+            180.0f * (1.0f + sinf(this->m_bufferId + glfwGetTime() + (1 / (float)vertices * 360.0f))),
+            1.0f, 
+            1.0f, 
+            r, 
+            g, 
+            b);
+
+        colors[3 * i + 0] = r;
+        colors[3 * i + 1] = g;
+        colors[3 * i + 2] = b;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(GLfloat) * 36 * 3,
+        colors,
+        GL_STATIC_DRAW
+    );
+
     this->m_shader->Use();
 
     GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
@@ -62,8 +93,6 @@ void Primitive::Render() {
     model = glm::rotate(model, this->eulerAngles.y, glm::vec3(0,1,0));
     model = glm::rotate(model, this->eulerAngles.z, glm::vec3(0,0,1));
     model = glm::scale(model, this->scale);
-
-    std::cout << this->eulerAngles.z << std::endl;
 
     glm::mat4 mvp = projection * view * model;
     glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
@@ -98,5 +127,4 @@ void Primitive::Render() {
     glDrawArrays(GL_TRIANGLES, 0, 12*3);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
-
 }

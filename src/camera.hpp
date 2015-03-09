@@ -27,8 +27,14 @@ public:
         m_window = window;
     }
 
+    void Free();
+
     void LookAt(float x, float y, float z);
     void MoveTo(float x, float y, float z);
+
+    glm::vec3 Forward() {
+        return glm::normalize(this->m_pos - this->m_eye);
+    }
 
     void SetProjectionMatrix(float angle, float ratio, float near, float far);
 
@@ -46,6 +52,8 @@ private:
     glm::vec3 m_eye;
     glm::vec3 m_pos;
     glm::vec3 m_up;
+
+    bool m_free;
 };
 
 //GLFWwindow* Camera::m_window = 0;

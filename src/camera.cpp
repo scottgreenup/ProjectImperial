@@ -1,6 +1,7 @@
 #include "camera.hpp"
 
-Camera::Camera() {
+Camera::Camera()
+: m_free(false) {
     this->m_up = glm::vec3(0, 1, 0);
     this->m_pos = glm::vec3(0, 5, -10);
     this->m_eye = glm::vec3(0, 0, 0);
@@ -24,6 +25,12 @@ void Camera::LookAt(float x, float y, float z) {
         this->m_eye,
         this->m_up
     );
+
+    m_free = false;
+}
+
+void Camera::Free() {
+    m_free = true;
 }
 
 void Camera::MoveTo(float x, float y, float z) {

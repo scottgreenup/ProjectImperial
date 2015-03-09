@@ -7,6 +7,7 @@
 
 // http://www.opengl-tutorial.org/beginners-tutorials/tutorial-4-a-colored-cube/
 
+#include <cstdlib>
 #include <cmath>
 #include <iostream>
 
@@ -24,7 +25,8 @@
 App::App(int width, int height, const char* name)
     : m_WindowWidth(width)
     , m_WindowHeight(height)
-    , m_WindowName(name) { }
+    , m_WindowName(name)
+    , m_cubeCount(50) { }
 
 App::~App() { }
 
@@ -113,6 +115,25 @@ bool App::Initialise() {
     this->m_cube->AttachShader(this->m_simpleShader);
     this->m_cube->position = glm::vec3(0.0f, 2.0f, 0.0f);
 
+    this->m_cubeGrid = new Cube*[m_cubeCount];
+
+    for (int i = 0; i < m_cubeCount; i++) {
+        this->m_cubeGrid[i] = new Cube[m_cubeCount];
+
+        for (int j = 0; j < m_cubeCount; j++) {
+            this->m_cubeGrid[i][j].AttachShader(this->m_simpleShader);
+            this->m_cubeGrid[i][j].position = glm::vec3(1.1 * i, 0, 1.1 * j);
+        }
+    }
+
+    /*
+    Camera::Get()->MoveTo(5.5f, 20.0f, -5.0f);
+    Camera::Get()->LookAt(5.5f, 0.0f, 5.5f);
+    // */
+
+    Camera::Get()->MoveTo(0.0f, 80.0f, -1.0f);
+    Camera::Get()->LookAt(0.0f, 0.0f, 0.0f);
+
     return true;
 }
 
@@ -134,12 +155,40 @@ bool App::Update() {
     m_currTime = glfwGetTime();
     float dt = m_currTime - m_prevTime;
 
+    /*
     this->m_cube->eulerAngles.z += 10.0f * dt;
     this->m_cube->eulerAngles.x += 5.0f * dt;
+    // */
+    
+    //this->m_cube->eulerAngles.z = 45.0f;
+    this->m_cube->eulerAngles.x = 45.0f;
 
-    this->m_cube->scale.x = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
-    this->m_cube->scale.y = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
-    this->m_cube->scale.z = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    //this->m_cube->scale.x = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    //this->m_cube->scale.y = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    //this->m_cube->scale.z = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    
+    for (int i = 0; i < m_cubeCount; i++) {
+        for (int j = 0; j < m_cubeCount; j++) {
+
+            float sine = (1.5f + sinf(1.0f * glfwGetTime())) * 0.5f;
+
+            int half = m_cubeCount / 2;
+
+            if (i < half) {
+                this->m_cubeGrid[i][j].position.x = (((i - half)) * sine * 1.5f);
+            } else {
+                this->m_cubeGrid[i][j].position.x = (((i - half)) * sine * 1.5f);
+            }
+
+            if (j < half) {
+                this->m_cubeGrid[i][j].position.z = (((j - half)) * sine * 1.5f);
+            } else {
+                this->m_cubeGrid[i][j].position.z = (((j - half)) * sine * 1.5f);
+            }
+        }
+    }
+
+
 
     glfwPollEvents();
     return true;
@@ -148,8 +197,14 @@ bool App::Update() {
 void App::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    this->m_cube->Render();
-    this->m_prim->Render();
+    //this->m_cube->Render();
+    //this->m_prim->Render();
+
+    for (int i = 0; i < m_cubeCount; i++) {
+        for (int j = 0; j < m_cubeCount; j++) {
+            this->m_cubeGrid[i][j].Render();
+        }
+    }
 
     glfwSwapBuffers(window);
 }
