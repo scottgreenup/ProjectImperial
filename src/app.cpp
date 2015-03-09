@@ -111,6 +111,7 @@ bool App::Initialise() {
 
     this->m_cube = new Cube();
     this->m_cube->AttachShader(this->m_simpleShader);
+    this->m_cube->position = glm::vec3(0.0f, 2.0f, 0.0f);
 
     return true;
 }
@@ -119,7 +120,6 @@ void App::CleanUp() {
     delete this->m_simpleShader;
     delete this->m_prim;
     delete this->m_cube;
-    //delete this->m_pkTriangle;
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -129,6 +129,17 @@ bool App::Update() {
     if (glfwWindowShouldClose(this->window)) {
         return false;
     }   
+
+    m_prevTime = m_currTime;
+    m_currTime = glfwGetTime();
+    float dt = m_currTime - m_prevTime;
+
+    this->m_cube->eulerAngles.z += 10.0f * dt;
+    this->m_cube->eulerAngles.x += 5.0f * dt;
+
+    this->m_cube->scale.x = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    this->m_cube->scale.y = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
+    this->m_cube->scale.z = 1.0f * (1.0f + sinf(2.0f * glfwGetTime()));
 
     glfwPollEvents();
     return true;

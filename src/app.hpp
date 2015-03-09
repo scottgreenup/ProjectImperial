@@ -27,15 +27,16 @@ private:
 
     struct GLFWwindow* window;
 
-    class Triangle* m_pkTriangle;
+    class Primitive* m_prim;
     class Cube* m_cube;
     class Shader* m_simpleShader;
-
-    class Primitive* m_prim;
 
     int m_WindowWidth;
     int m_WindowHeight;
     const char* m_WindowName;
+
+    float m_prevTime;
+    float m_currTime;
 };
 
 #endif

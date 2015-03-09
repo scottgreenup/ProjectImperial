@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
@@ -12,7 +11,10 @@
 #include "shader.hpp"
 #include "primitive.hpp"
 
-Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount) {
+Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
+: position(glm::vec3(0.0f))
+, eulerAngles(glm::vec3(0.0f))
+, scale(glm::vec3(1.0f)) {
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -54,7 +56,14 @@ void Primitive::Render() {
     GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
     glm::mat4 projection = Camera::Get()->GetProjectionMatrix();
     glm::mat4 view = Camera::Get()->GetViewMatrix();
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), this->position);
+    model = glm::rotate(model, this->eulerAngles.x, glm::vec3(1,0,0));
+    model = glm::rotate(model, this->eulerAngles.y, glm::vec3(0,1,0));
+    model = glm::rotate(model, this->eulerAngles.z, glm::vec3(0,0,1));
+    model = glm::scale(model, this->scale);
+
+    std::cout << this->eulerAngles.z << std::endl;
 
     glm::mat4 mvp = projection * view * model;
     glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);

@@ -106,6 +106,6 @@ Cube::Cube()
 
 Cube::~Cube() { }
 
-void Cube::Render() {
-    Primitive::Render();
-}
+//void Cube::Render() {
+//    Primitive::Render();
+//}
