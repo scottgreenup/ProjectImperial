@@ -22,10 +22,10 @@
 #include "cube.h"
 
 App::App(int width, int height, const char* name)
-    : m_cubeCount(50)
-    , m_WindowWidth(width)
-    , m_WindowHeight(height)
-    , m_WindowName(name)
+ : m_cubeCount(50)
+ , m_WindowWidth(width)
+ , m_WindowHeight(height)
+ , m_WindowName(name)
 {}
 
 App::~App() { }
@@ -67,6 +67,7 @@ bool App::Initialise() {
     glClearColor(0.15, 0.1, 0.35, 0.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     // create our shaders
     this->m_simpleShader = new Shader(
@@ -127,13 +128,20 @@ bool App::Update() {
     m_currTime = glfwGetTime();
     float dt = m_currTime - m_prevTime;
     
+    float speed = 0.8f;
+
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
 
-            float sine = (1.5f + sinf(1.0f * glfwGetTime())) * 0.5f;
+
+            float sine = (8.0f + sinf(speed * glfwGetTime()) * 10.0f) * 0.5f;
+
+            float scale_size = sine * 0.8f;
+            this->m_cubeGrid[i][j].scale.x = scale_size;
+            this->m_cubeGrid[i][j].scale.y = scale_size;
+            this->m_cubeGrid[i][j].scale.z = scale_size;
 
             int half = m_cubeCount / 2;
-
             if (i < half) {
                 this->m_cubeGrid[i][j].position.x = (((i - half)) * sine * 1.5f);
             } else {

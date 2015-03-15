@@ -7,7 +7,9 @@
 
 #include <glm/glm.hpp>
 
-class Primitive {
+#include "transform.h"
+
+class Primitive : public Transform {
 public:
     Primitive(GLfloat* verts, GLfloat* colors, int vertCount);
     virtual ~Primitive();
@@ -17,10 +19,6 @@ public:
     void AttachShader(class Shader* shader) {
         this->m_shader = shader;
     }
-
-    glm::vec3 position;
-    glm::vec3 eulerAngles;
-    glm::vec3 scale;
 
 protected:
     class Shader* m_shader;
