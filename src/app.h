@@ -33,11 +33,14 @@ private:
     std::string m_WindowName;
 
     class Shader* m_simpleShader;
-    class Cube** m_cubeGrid;
+    class Cube*** m_cubeGrid;
     int m_cubeCount;
 
     float m_prevTime;
     float m_currTime;
+
+    double m_mxPrev;
+    double m_myPrev;
 };
 
 #endif

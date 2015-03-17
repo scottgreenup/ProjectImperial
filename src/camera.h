@@ -27,6 +27,8 @@ public:
         m_window = window;
     }
 
+    void Update(float dt, float mxDelta, float myDelta);
+
     void Free();
 
     void LookAt(float x, float y, float z);
@@ -52,6 +54,9 @@ private:
     glm::vec3 m_eye;
     glm::vec3 m_pos;
     glm::vec3 m_up;
+
+    float m_pitch;
+    float m_yaw;
 
     bool m_free;
 };
