@@ -1,8 +1,8 @@
 
 #include "app.h"
 
-int main(void)
-{
+int main(void) {
+
     App kApp(1920, 1080, "Hello World");
     if (!kApp.Initialise()) {
         return 1;

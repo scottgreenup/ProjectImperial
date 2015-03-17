@@ -14,9 +14,7 @@
 #include "primitive.h"
 
 Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
-: position(glm::vec3(0.0f))
-, eulerAngles(glm::vec3(0.0f))
-, scale(glm::vec3(1.0f)) {
+: Transform() {
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -33,9 +31,6 @@ Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
         verts,           // data
         GL_STATIC_DRAW   // how it will be used
     );
-
-    std::cerr << "Vertex Array ID = " << this->m_vertexArrayId << std::endl;
-    std::cerr << "Buffer Object ID = " << this->m_bufferId << std::endl;
 
     glGenBuffers(1, &this->m_colorBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
@@ -80,19 +75,8 @@ void Primitive::Render() {
     );
 
     this->m_shader->Use();
-
     GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
-    glm::mat4 projection = Camera::Get()->GetProjectionMatrix();
-    glm::mat4 view = Camera::Get()->GetViewMatrix();
-
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), this->position);
-    model = glm::rotate(model, this->eulerAngles.x, glm::vec3(1,0,0));
-    model = glm::rotate(model, this->eulerAngles.y, glm::vec3(0,1,0));
-    model = glm::rotate(model, this->eulerAngles.z, glm::vec3(0,0,1));
-    model = glm::scale(model, this->scale);
-
-    glm::mat4 mvp = projection * view * model;
-    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &MVP()[0][0]);
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
