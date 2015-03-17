@@ -1,4 +1,3 @@
-
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -11,10 +10,29 @@
 
 #include "camera.h"
 #include "shader.h"
-#include "primitive.h"
+#include "centermatrix.h"
 
-Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
-: Transform() {
+CenterMatrix::CenterMatrix(float size)
+: Transform()
+, m_size(size) {
+
+    GLfloat verts[] = {
+        0.0f, 0.0f, 0.0f,
+        size, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, size, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, size,
+    };
+
+    GLfloat colors[] = {
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+    };
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -27,7 +45,7 @@ Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
     // create and initialise the BO's data store
     glBufferData(
         GL_ARRAY_BUFFER, // target
-        sizeof(GLfloat) * vertCount * 3,   // size
+        sizeof(GLfloat) * 18,   // size
         verts,           // data
         GL_STATIC_DRAW   // how it will be used
     );
@@ -36,45 +54,20 @@ Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glBufferData(
         GL_ARRAY_BUFFER,
-        sizeof(GLfloat) * vertCount * 3,
+        sizeof(GLfloat) * 18,
         colors,
         GL_STATIC_DRAW
     );
 }
 
-Primitive::~Primitive() {
+CenterMatrix::~CenterMatrix() {
     glDeleteBuffers(1, &this->m_bufferId);
     glDeleteVertexArrays(1, &this->m_vertexArrayId);
 }
 
-void Primitive::Render() {
-    const int vertices = 36;
-    GLfloat colors[vertices * 3];
-
-    for (int i = 0; i < vertices; ++i) {
-        float r, g, b;
-        HSVtoRGB(
-            //(float)(x % 360) + (i / (float)vertices * 360.0f), 
-            180.0f * (1.0f + sinf( (this->m_bufferId * 0.00001f) + glfwGetTime() + (1 / (float)vertices * 360.0f))),
-            1.0f, 
-            1.0f, 
-            r, 
-            g, 
-            b);
-
-        colors[3 * i + 0] = r;
-        colors[3 * i + 1] = g;
-        colors[3 * i + 2] = b;
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(GLfloat) * 36 * 3,
-        colors,
-        GL_STATIC_DRAW
-    );
-
+void CenterMatrix::Render() {
     this->m_shader->Use();
+
     GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
     glUniformMatrix4fv(matrixId, 1, GL_FALSE, &MVP()[0][0]);
 
@@ -105,35 +98,7 @@ void Primitive::Render() {
         (void*)0
     );
 
-    glDrawArrays(GL_TRIANGLES, 0, 12*3);
-
-    bool draw_outline = true;
-
-    if (draw_outline) {
-        glEnableVertexAttribArray(1);
-        for (int i = 0; i < vertices; ++i) {
-            colors[3 * i + 0] = 0;
-            colors[3 * i + 1] = 0;
-            colors[3 * i + 2] = 0;
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
-        glBufferData(
-            GL_ARRAY_BUFFER,
-            sizeof(GLfloat) * 36 * 3,
-            colors,
-            GL_STATIC_DRAW
-        );
-        glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
-        glVertexAttribPointer(
-            1,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void*)0
-        );
-        glDrawArrays(GL_LINE_STRIP, 0, 12*3);
-    }
+    glDrawArrays(GL_LINES, 0, 18);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);

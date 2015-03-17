@@ -34,6 +34,7 @@ private:
 
     class Shader* m_simpleShader;
     class Cube*** m_cubeGrid;
+    class CenterMatrix* m_matrix;
     int m_cubeCount;
 
     float m_prevTime;

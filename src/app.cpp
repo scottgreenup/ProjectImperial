@@ -21,6 +21,8 @@
 #include "shader.h"
 #include "cube.h"
 
+#include "centermatrix.h"
+
 App::App(int width, int height, const char* name)
  : m_WindowWidth(width)
  , m_WindowHeight(height)
@@ -134,10 +136,16 @@ bool App::Initialise() {
     m_myPrev = my;
     m_mxPrev = mx;
 
+    m_matrix = new CenterMatrix(2.0f);
+    m_matrix->AttachShader(this->m_simpleShader);
+    m_matrix->position = glm::vec3(0.0f, 0.0f, 0.0f);
+
     return true;
 }
 
 void App::CleanUp() {
+    delete m_matrix;
+
     delete this->m_simpleShader;
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -207,9 +215,16 @@ bool App::Update() {
 void App::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    m_matrix->Render();
+
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
             for (int k = 0; k < m_cubeCount; k++) {
+
+                int x = m_cubeCount / 2;
+
+                if (i == x && j == x && k == 0) continue;
+
                 this->m_cubeGrid[i][j][k].Render();
             }
         }
