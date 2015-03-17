@@ -11,7 +11,7 @@
 
 class Primitive : public Transform {
 public:
-    Primitive(GLfloat* verts, GLfloat* colors, int vertCount);
+    Primitive(GLfloat* verts, GLfloat* colors, unsigned int vertCount);
     virtual ~Primitive();
 
     virtual void Render();
@@ -20,12 +20,18 @@ public:
         this->m_shader = shader;
     }
 
+    void ChangeDrawMode(GLenum mode);
+
 protected:
     class Shader* m_shader;
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
     GLuint m_colorBufferId;
+
+    GLenum m_drawMode;
+
+    unsigned int m_vertCount;
 
 private:
     Primitive() = delete;

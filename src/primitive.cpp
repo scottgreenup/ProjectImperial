@@ -13,8 +13,10 @@
 #include "shader.h"
 #include "primitive.h"
 
-Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
-: Transform() {
+Primitive::Primitive(GLfloat* verts, GLfloat *colors, unsigned int vertCount)
+: Transform()
+, m_drawMode(GL_TRIANGLES)
+, m_vertCount(vertCount) {
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -32,8 +34,8 @@ Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
         GL_STATIC_DRAW   // how it will be used
     );
 
-    glGenBuffers(1, &this->m_colorBufferId);
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+    glGenBuffers(1, &m_colorBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, m_colorBufferId);
     glBufferData(
         GL_ARRAY_BUFFER,
         sizeof(GLfloat) * vertCount * 3,
@@ -43,11 +45,16 @@ Primitive::Primitive(GLfloat* verts, GLfloat *colors, int vertCount)
 }
 
 Primitive::~Primitive() {
-    glDeleteBuffers(1, &this->m_bufferId);
-    glDeleteVertexArrays(1, &this->m_vertexArrayId);
+    glDeleteBuffers(1, &m_bufferId);
+    glDeleteVertexArrays(1, &m_vertexArrayId);
+}
+
+void Primitive::ChangeDrawMode(GLenum drawMode) {
+    m_drawMode = drawMode;
 }
 
 void Primitive::Render() {
+    /*
     const int vertices = 36;
     GLfloat colors[vertices * 3];
 
@@ -69,10 +76,11 @@ void Primitive::Render() {
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glBufferData(
         GL_ARRAY_BUFFER,
-        sizeof(GLfloat) * 36 * 3,
+        sizeof(GLfloat) * m_vertCount * 3,
         colors,
         GL_STATIC_DRAW
     );
+    */
 
     this->m_shader->Use();
     GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
@@ -95,6 +103,19 @@ void Primitive::Render() {
     );
 
     glEnableVertexAttribArray(1);
+    GLfloat* colors = new GLfloat[m_vertCount * 3];
+        for (unsigned int i = 0; i < m_vertCount; ++i) {
+            colors[3 * i + 0] = 1;
+            colors[3 * i + 1] = 1;
+            colors[3 * i + 2] = 1;
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            sizeof(GLfloat) * m_vertCount * 3,
+            colors,
+            GL_STATIC_DRAW
+        );
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glVertexAttribPointer(
         1,
@@ -105,13 +126,13 @@ void Primitive::Render() {
         (void*)0
     );
 
-    glDrawArrays(GL_TRIANGLES, 0, 12*3);
+    glDrawArrays(m_drawMode, 0, m_vertCount);
 
     bool draw_outline = true;
 
     if (draw_outline) {
         glEnableVertexAttribArray(1);
-        for (int i = 0; i < vertices; ++i) {
+        for (unsigned int i = 0; i < m_vertCount; ++i) {
             colors[3 * i + 0] = 0;
             colors[3 * i + 1] = 0;
             colors[3 * i + 2] = 0;
@@ -119,7 +140,7 @@ void Primitive::Render() {
         glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
         glBufferData(
             GL_ARRAY_BUFFER,
-            sizeof(GLfloat) * 36 * 3,
+            sizeof(GLfloat) * m_vertCount * 3,
             colors,
             GL_STATIC_DRAW
         );
@@ -132,8 +153,9 @@ void Primitive::Render() {
             0,
             (void*)0
         );
-        glDrawArrays(GL_LINE_STRIP, 0, 12*3);
+        glDrawArrays(GL_LINE_STRIP, 0, m_vertCount);
     }
+    delete colors;
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);

@@ -88,7 +88,7 @@ GLfloat colors[] = {
 
 
 Cube::Cube()
-: Primitive(&verts[0], &colors[0], 36) {
+: Primitive(&verts[0], &colors[0], (sizeof(colors) / sizeof(GLfloat) / 3)) {
 
 }
 
