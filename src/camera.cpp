@@ -42,12 +42,22 @@ void Camera::Update(float dt, float mxDelta, float myDelta) {
         
     }
 
-
     glm::vec3 forward = glm::normalize(this->m_eye - this->m_pos);
     glm::vec3 right = -glm::normalize(glm::cross(glm::vec3(0,1,0), forward));
-    //glm::vec3 up = glm::normalize(glm::cross(forward, right));
+    glm::vec3 up = -glm::normalize(glm::cross(forward, right));
 
-    float speed = 5.0f;
+    float speed = 40.f;
+
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        speed *= 2.f;
+    }
+
+    if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS) {
+        m_pos = m_pos + up * dt * speed;
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS) {
+        m_pos = m_pos - up * dt * speed;
+    }
 
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
         m_pos = m_pos + forward * dt * speed;

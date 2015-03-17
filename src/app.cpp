@@ -61,6 +61,8 @@ bool App::Initialise() {
     glfwSetKeyCallback(this->window, App::KeyCallback);
     glfwSetErrorCallback(App::ErrorCallback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // setup OpenGL specific configuration
     std::cerr << "Using " << glGetString(GL_VERSION) << std::endl;
     // TODO work out what `glewExperimental = true;` does
@@ -162,9 +164,9 @@ bool App::Update() {
 
     Camera::Get()->Update(dt, mxDelta, myDelta);
     
-    /*
-    float speed = 0.8f;
-    float sep = 1.5f + sinf(glfwGetTime()) * 1.5f;
+    ///* Yeah... ugly... I know...
+    float speed = 0.1f;
+    float sep = 4.5f + sinf(glfwGetTime()) * 1.5f;
 
     float sine = (16.0f + sinf(speed * glfwGetTime()) * 5.0f) * 0.5f;
 
@@ -189,7 +191,7 @@ bool App::Update() {
                     this->m_cubeGrid[i][j][k].position.z = (((j - half)) * sine * sep);
                 }
 
-                this->m_cubeGrid[i][j][k].position.y = (k * sine * 1.5f);
+                this->m_cubeGrid[i][j][k].position.y = (k * sine * sep);
 
                 this->m_cubeGrid[i][j][k].eulerAngles.y = (sine * 1.5f);
                 this->m_cubeGrid[i][j][k].eulerAngles.x = (sine * 1.5f);

@@ -106,7 +106,31 @@ void Primitive::Render() {
     );
 
     glDrawArrays(GL_TRIANGLES, 0, 12*3);
-    //glDrawArrays(GL_LINES, 0, 12*3);
+
+    glEnableVertexAttribArray(1);
+    for (int i = 0; i < vertices; ++i) {
+        colors[3 * i + 0] = 0;
+        colors[3 * i + 1] = 0;
+        colors[3 * i + 2] = 0;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(GLfloat) * 36 * 3,
+        colors,
+        GL_STATIC_DRAW
+    );
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void*)0
+    );
+    glDrawArrays(GL_LINE_STRIP, 0, 12*3);
+
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 }
