@@ -22,10 +22,14 @@
 #include "cube.h"
 
 App::App(int width, int height, const char* name)
- : m_cubeCount(50)
- , m_WindowWidth(width)
+ : m_WindowWidth(width)
  , m_WindowHeight(height)
  , m_WindowName(name)
+ , m_cubeCount(15)
+ , m_prevTime(0)
+ , m_currTime(0)
+ , m_mxPrev(0)
+ , m_myPrev(0)
 {}
 
 App::~App() { }
@@ -67,7 +71,7 @@ bool App::Initialise() {
     glClearColor(0.15, 0.1, 0.35, 0.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     // create our shaders
     this->m_simpleShader = new Shader(
@@ -90,24 +94,43 @@ bool App::Initialise() {
         1000.f
     );
 
-    this->m_cubeGrid = new Cube*[m_cubeCount];
+    this->m_cubeGrid = new Cube**[m_cubeCount];
 
     for (int i = 0; i < m_cubeCount; i++) {
-        this->m_cubeGrid[i] = new Cube[m_cubeCount];
+        this->m_cubeGrid[i] = new Cube*[m_cubeCount];
 
         for (int j = 0; j < m_cubeCount; j++) {
-            this->m_cubeGrid[i][j].AttachShader(this->m_simpleShader);
-            this->m_cubeGrid[i][j].position = glm::vec3(1.1 * i, 0, 1.1 * j);
+            this->m_cubeGrid[i][j] = new Cube[m_cubeCount];
+
+            for (int k = 0; k < m_cubeCount; k++) {
+                this->m_cubeGrid[i][j][k].AttachShader(this->m_simpleShader);
+                this->m_cubeGrid[i][j][k].position = glm::vec3(1.1 * i, 1.1 * k, 1.1 * j);
+            }
         }
     }
 
-    /*
-    Camera::Get()->MoveTo(5.5f, 20.0f, -5.0f);
-    Camera::Get()->LookAt(5.5f, 0.0f, 5.5f);
+
+     /* distant
+    Camera::Get()->MoveTo(200.0f, 400.0f, -1.0f);
+    Camera::Get()->LookAt(0.0f, 100.0f, 0.0f);
     // */
 
-    Camera::Get()->MoveTo(0.0f, 80.0f, -1.0f);
-    Camera::Get()->LookAt(0.0f, 0.0f, 0.0f);
+    /* in the midst
+    Camera::Get()->MoveTo(000.0f, 90.0f, -1.0f);
+    Camera::Get()->LookAt(0.0f, 100.0f, 0.0f);
+    // */
+    
+    ///* square
+    Camera::Get()->MoveTo(0.0f, 0.0f, 0.0f);
+    Camera::Get()->LookAt(0.0f, 0.0f, 1.0f);
+    // */
+    
+    Camera::Get()->SetWindow(window);
+
+    double mx, my;
+    glfwGetCursorPos(window, &mx, &my);
+    m_myPrev = my;
+    m_mxPrev = mx;
 
     return true;
 }
@@ -127,34 +150,53 @@ bool App::Update() {
     m_prevTime = m_currTime;
     m_currTime = glfwGetTime();
     float dt = m_currTime - m_prevTime;
+
+    double mx, my;
+    glfwGetCursorPos(window, &mx, &my);
+
+    double mxDelta = mx - m_mxPrev;
+    double myDelta = my - m_myPrev;
+
+    m_mxPrev = mx;
+    m_myPrev = my;
+
+    Camera::Get()->Update(dt, mxDelta, myDelta);
     
+    /*
     float speed = 0.8f;
+    float sep = 1.5f + sinf(glfwGetTime()) * 1.5f;
+
+    float sine = (16.0f + sinf(speed * glfwGetTime()) * 5.0f) * 0.5f;
 
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
+            for (int k = 0; k < m_cubeCount; k++) {
+                float scale_size = sine * 0.8f;
+                this->m_cubeGrid[i][j][k].scale.x = scale_size;
+                this->m_cubeGrid[i][j][k].scale.y = scale_size;
+                this->m_cubeGrid[i][j][k].scale.z = scale_size;
 
+                int half = m_cubeCount / 2;
+                if (i < half) {
+                    this->m_cubeGrid[i][j][k].position.x = (((i - half)) * sine * sep);
+                } else {
+                    this->m_cubeGrid[i][j][k].position.x = (((i - half)) * sine * sep);
+                }
 
-            float sine = (8.0f + sinf(speed * glfwGetTime()) * 10.0f) * 0.5f;
+                if (j < half) {
+                    this->m_cubeGrid[i][j][k].position.z = (((j - half)) * sine * sep);
+                } else {
+                    this->m_cubeGrid[i][j][k].position.z = (((j - half)) * sine * sep);
+                }
 
-            float scale_size = sine * 0.8f;
-            this->m_cubeGrid[i][j].scale.x = scale_size;
-            this->m_cubeGrid[i][j].scale.y = scale_size;
-            this->m_cubeGrid[i][j].scale.z = scale_size;
+                this->m_cubeGrid[i][j][k].position.y = (k * sine * 1.5f);
 
-            int half = m_cubeCount / 2;
-            if (i < half) {
-                this->m_cubeGrid[i][j].position.x = (((i - half)) * sine * 1.5f);
-            } else {
-                this->m_cubeGrid[i][j].position.x = (((i - half)) * sine * 1.5f);
-            }
-
-            if (j < half) {
-                this->m_cubeGrid[i][j].position.z = (((j - half)) * sine * 1.5f);
-            } else {
-                this->m_cubeGrid[i][j].position.z = (((j - half)) * sine * 1.5f);
+                this->m_cubeGrid[i][j][k].eulerAngles.y = (sine * 1.5f);
+                this->m_cubeGrid[i][j][k].eulerAngles.x = (sine * 1.5f);
             }
         }
     }
+    // */
 
     glfwPollEvents();
     return true;
@@ -165,7 +207,9 @@ void App::Render() {
 
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
-            this->m_cubeGrid[i][j].Render();
+            for (int k = 0; k < m_cubeCount; k++) {
+                this->m_cubeGrid[i][j][k].Render();
+            }
         }
     }
 

@@ -55,7 +55,7 @@ void Primitive::Render() {
         float r, g, b;
         HSVtoRGB(
             //(float)(x % 360) + (i / (float)vertices * 360.0f), 
-            180.0f * (1.0f + sinf(this->m_bufferId + glfwGetTime() + (1 / (float)vertices * 360.0f))),
+            180.0f * (1.0f + sinf( (this->m_bufferId * 0.00001f) + glfwGetTime() + (1 / (float)vertices * 360.0f))),
             1.0f, 
             1.0f, 
             r, 
@@ -106,6 +106,7 @@ void Primitive::Render() {
     );
 
     glDrawArrays(GL_TRIANGLES, 0, 12*3);
+    //glDrawArrays(GL_LINES, 0, 12*3);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 }
