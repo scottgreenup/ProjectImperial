@@ -47,48 +47,11 @@ GLfloat verts[] = {
      0.5f, -0.5f,  0.5f
 };
 
-GLfloat colors[] = {
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f
-};
-
-
 Cube::Cube()
-: Primitive(&verts[0], &colors[0], (sizeof(colors) / sizeof(GLfloat) / 3)) {
+: Primitive(&verts[0], (sizeof(verts) / sizeof(GLfloat) / 3)) {
+
+    this->SetColor(1.0f, 0.0f, 0.0f);
+    this->SetOutlineColor(0.0f, 1.0f, 0.0f);
 
 }
 

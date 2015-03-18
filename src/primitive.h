@@ -11,7 +11,7 @@
 
 class Primitive : public Transform {
 public:
-    Primitive(GLfloat* verts, GLfloat* colors, unsigned int vertCount);
+    Primitive(GLfloat* verts, unsigned int vertCount);
     virtual ~Primitive();
 
     virtual void Render();
@@ -22,16 +22,21 @@ public:
 
     void ChangeDrawMode(GLenum mode);
 
+    void SetColor(float r, float g, float b);
+    void SetOutlineColor(float r, float g, float b);
+
 protected:
     class Shader* m_shader;
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
-    GLuint m_colorBufferId;
 
     GLenum m_drawMode;
 
     unsigned int m_vertCount;
+
+    glm::vec3 m_color;
+    glm::vec3 m_outlineColor;
 
 private:
     Primitive() = delete;
