@@ -30,6 +30,7 @@ protected:
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
+    GLuint m_normalId;
 
     GLenum m_drawMode;
 

@@ -17,6 +17,8 @@ public:
     Transform(const glm::vec3& pos, const glm::vec3& euler, const glm::vec3& scale);
 
     glm::mat4 MVP();
+    glm::mat4 Model();
+    glm::mat4 ModelView();
 
     virtual ~Transform();
 

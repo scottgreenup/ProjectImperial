@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <stdio.h>
 #include <iostream>
 
 #include "color.h"
@@ -13,6 +14,8 @@
 #include "camera.h"
 #include "shader.h"
 #include "primitive.h"
+
+GLfloat* normals = nullptr;
 
 Primitive::Primitive(GLfloat* verts, unsigned int vertCount)
 : Transform()
@@ -32,9 +35,56 @@ Primitive::Primitive(GLfloat* verts, unsigned int vertCount)
         verts,           // data
         GL_STATIC_DRAW   // how it will be used
     );
+
+    // TODO improve the normals being calculated, should be moved to the class above?
+    normals = new GLfloat[vertCount * 3];
+    for (unsigned int i = 0; i < (vertCount / 3); i++) {
+        glm::vec3 a(
+            verts[9 * i + 0],
+            verts[9 * i + 1],
+            verts[9 * i + 2]
+        );
+        glm::vec3 b(
+            verts[9 * i + 3],
+            verts[9 * i + 4],
+            verts[9 * i + 5]
+        );
+        glm::vec3 c(
+            verts[9 * i + 6],
+            verts[9 * i + 7],
+            verts[9 * i + 8]
+        );
+
+        glm::vec3 edgeAB = b - a;
+        glm::vec3 edgeAC = c - a;
+
+        glm::vec3 normal = -glm::cross(edgeAB, edgeAC);
+        normals[9 * i + 0] = normal.x;
+        normals[9 * i + 1] = normal.y;
+        normals[9 * i + 2] = normal.z;
+        normals[9 * i + 3] = normal.x;
+        normals[9 * i + 4] = normal.y;
+        normals[9 * i + 5] = normal.z;
+        normals[9 * i + 6] = normal.x;
+        normals[9 * i + 7] = normal.y;
+        normals[9 * i + 8] = normal.z;
+    }
+
+    glGenBuffers(1, &this->m_normalId);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_normalId);
+    glBufferData(
+        GL_ARRAY_BUFFER, // target
+        sizeof(GLfloat) * vertCount * 3,   // size
+        normals,         // data
+        GL_STATIC_DRAW   // how it will be used
+    );
+
 }
 
 Primitive::~Primitive() {
+    delete normals;
+
+    glDeleteBuffers(1, &m_normalId);
     glDeleteBuffers(1, &m_bufferId);
     glDeleteVertexArrays(1, &m_vertexArrayId);
 }
@@ -54,17 +104,31 @@ void Primitive::SetColor(float r, float g, float b) {
 void Primitive::Render() {
     this->m_shader->Use();
 
-    GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
+    GLuint modelViewId = glGetUniformLocation(this->m_shader->Id(), "modelView");
+    GLuint normalId = glGetUniformLocation(this->m_shader->Id(), "normalMatrix");
+    GLuint projectionId = glGetUniformLocation(this->m_shader->Id(), "projection");
     GLuint colorId = glGetUniformLocation(this->m_shader->Id(), "solidColor");
 
-    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &MVP()[0][0]);
+    glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &ModelView()[0][0]);
+    glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
+    glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
     glUniform3fv(colorId, 1, glm::value_ptr(m_color));
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_bufferId);
     glVertexAttribPointer(
-        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        0,                  // attribute 0.s No particular reason for 0, but must match the layout in the shader.
+        3,                  // size of each vert
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_normalId);
+    glVertexAttribPointer(
+        1,                  // attribute 0.s No particular reason for 0, but must match the layout in the shader.
         3,                  // size of each vert
         GL_FLOAT,           // type
         GL_FALSE,           // normalized?

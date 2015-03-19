@@ -13,12 +13,8 @@ public:
     Camera();
     ~Camera();
 
-    static Camera* Get() {
-        static Camera* instance;
-
-        if (instance == 0) {
-            instance = new Camera();
-        }   
+    static Camera& Get() {
+        static Camera instance;
 
         return instance;
     }
