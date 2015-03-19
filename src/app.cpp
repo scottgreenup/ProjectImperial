@@ -72,7 +72,7 @@ bool App::Initialise() {
         std::cerr << "Failed to initialise GLEW." << std::endl;
         return false;
     }
-    glClearColor(0.15, 0.1, 0.35, 0.0);
+    glClearColor(0.7, 0.7, 0.7, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

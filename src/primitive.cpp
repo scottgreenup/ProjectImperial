@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <stdio.h>
+#include <string>
 #include <iostream>
 
 #include "color.h"
@@ -113,6 +114,16 @@ void Primitive::Render() {
     glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
     glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
     glUniform3fv(colorId, 1, glm::value_ptr(m_color));
+
+    GLuint fogColorId   = glGetUniformLocation(m_shader->Id(), "fogParams.color");
+    GLuint fogStartId   = glGetUniformLocation(m_shader->Id(), "fogParams.start");
+    GLuint fogEndId     = glGetUniformLocation(m_shader->Id(), "fogParams.end");
+    GLuint fogDensityId = glGetUniformLocation(m_shader->Id(), "fogParams.density");
+
+    glUniform1f(fogStartId, 10.0f);
+    glUniform1f(fogEndId, 500.0f);
+    glUniform1f(fogDensityId, 0.05f);
+    glUniform4f(fogColorId, 0.7f, 0.7f, 0.7f, 1.0f);
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);

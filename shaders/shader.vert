@@ -10,14 +10,16 @@ uniform vec3 solidColor;
 
 smooth out vec3 fragColor;
 smooth out vec3 fragNormal;
+smooth out vec4 fragModelView;
 
 void main() {
-    //gl_Position = MVP * vec4(inPosition, 1);
+    fragModelView = modelView * vec4(inPosition, 1.0);
+    gl_Position = projection * fragModelView;
 
-    gl_Position = projection * modelView * vec4(inPosition, 1.0); 
-    vec4 res = normalMatrix * vec4(inNormal, 0.0);
+    vec4 normalised = (normalMatrix * vec4(inNormal, 0.0));
 
-    fragNormal = res.xyz;
+    fragNormal = normalised.xyz;
     fragColor = solidColor;
+
 }
 
