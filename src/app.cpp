@@ -27,7 +27,7 @@ App::App(int width, int height, const char* name)
  : m_WindowWidth(width)
  , m_WindowHeight(height)
  , m_WindowName(name)
- , m_cubeCount(15)
+ , m_cubeCount(22)
  , m_prevTime(0)
  , m_currTime(0)
  , m_mxPrev(0)
@@ -91,7 +91,7 @@ bool App::Initialise() {
     int height = 0;
     glfwGetFramebufferSize(this->window, &width, &height);
 
-    Camera::Get()->SetProjectionMatrix(
+    Camera::Get().SetProjectionMatrix(
         45.0f, 
         width / (float)height, 
         0.1f, 
@@ -115,21 +115,21 @@ bool App::Initialise() {
 
 
      /* distant
-    Camera::Get()->MoveTo(200.0f, 400.0f, -1.0f);
-    Camera::Get()->LookAt(0.0f, 100.0f, 0.0f);
+    Camera::Get().MoveTo(200.0f, 400.0f, -1.0f);
+    Camera::Get().LookAt(0.0f, 100.0f, 0.0f);
     // */
 
     /* in the midst
-    Camera::Get()->MoveTo(000.0f, 90.0f, -1.0f);
-    Camera::Get()->LookAt(0.0f, 100.0f, 0.0f);
+    Camera::Get().MoveTo(000.0f, 90.0f, -1.0f);
+    Camera::Get().LookAt(0.0f, 100.0f, 0.0f);
     // */
     
     ///* square
-    Camera::Get()->MoveTo(0.0f, 0.0f, 0.0f);
-    Camera::Get()->LookAt(0.0f, 0.0f, 1.0f);
+    Camera::Get().MoveTo(0.0f, 0.0f, 0.0f);
+    Camera::Get().LookAt(0.0f, 0.0f, 1.0f);
     // */
     
-    Camera::Get()->SetWindow(window);
+    Camera::Get().SetWindow(window);
 
     double mx, my;
     glfwGetCursorPos(window, &mx, &my);
@@ -170,7 +170,7 @@ bool App::Update() {
     m_mxPrev = mx;
     m_myPrev = my;
 
-    Camera::Get()->Update(dt, mxDelta, myDelta);
+    Camera::Get().Update(dt, mxDelta, myDelta);
     
     ///* Yeah... ugly... I know...
     float speed = 0.1f;
@@ -216,6 +216,8 @@ void App::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_matrix->Render();
+
+
 
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
