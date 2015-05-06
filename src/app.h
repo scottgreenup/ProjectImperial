@@ -32,7 +32,7 @@ private:
     int m_WindowHeight;
     std::string m_WindowName;
 
-    class Shader* m_simpleShader;
+    class ShaderProgram* m_simpleShader;
     class Cube*** m_cubeGrid;
     class CenterMatrix* m_matrix;
     int m_cubeCount;

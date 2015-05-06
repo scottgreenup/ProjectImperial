@@ -26,6 +26,7 @@ CenterMatrix::CenterMatrix(float size)
         0.0f, 0.0f, size,
     };
 
+    /*
     GLfloat colors[] = {
         1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,
@@ -34,6 +35,7 @@ CenterMatrix::CenterMatrix(float size)
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
     };
+    */
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -85,22 +87,22 @@ CenterMatrix::~CenterMatrix() {
 }
 
 void CenterMatrix::Render() {
-    this->m_shader->Use();
+    this->m_shader->use();
 
-    GLuint modelViewId  = glGetUniformLocation(this->m_shader->Id(), "modelView");
-    GLuint normalId     = glGetUniformLocation(this->m_shader->Id(), "normalMatrix");
-    GLuint projectionId = glGetUniformLocation(this->m_shader->Id(), "projection");
-    GLuint colorId      = glGetUniformLocation(this->m_shader->Id(), "solidColor");
+    GLuint modelViewId  = glGetUniformLocation(this->m_shader->id(), "modelView");
+    GLuint normalId     = glGetUniformLocation(this->m_shader->id(), "normalMatrix");
+    GLuint projectionId = glGetUniformLocation(this->m_shader->id(), "projection");
+    GLuint colorId      = glGetUniformLocation(this->m_shader->id(), "solidColor");
 
     glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &ModelView()[0][0]);
     glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
     glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
 
 
-    GLuint fogColorId   = glGetUniformLocation(m_shader->Id(), "fogParams.color");
-    GLuint fogStartId   = glGetUniformLocation(m_shader->Id(), "fogParams.start");
-    GLuint fogEndId     = glGetUniformLocation(m_shader->Id(), "fogParams.end");
-    GLuint fogDensityId = glGetUniformLocation(m_shader->Id(), "fogParams.density");
+    GLuint fogColorId   = glGetUniformLocation(m_shader->id(), "fogParams.color");
+    GLuint fogStartId   = glGetUniformLocation(m_shader->id(), "fogParams.start");
+    GLuint fogEndId     = glGetUniformLocation(m_shader->id(), "fogParams.end");
+    GLuint fogDensityId = glGetUniformLocation(m_shader->id(), "fogParams.density");
 
     glUniform1f(fogStartId, 10.0f);
     glUniform1f(fogEndId, 500.0f);

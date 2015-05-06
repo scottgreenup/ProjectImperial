@@ -78,11 +78,13 @@ bool App::Initialise() {
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     // create our shaders
-    this->m_simpleShader = new Shader(
-        "shaders/shader.vert",
-        "shaders/shader.frag"
-    );
-    if (!this->m_simpleShader->Load()) {
+    
+    ShaderProgram::Builder shaderProgramBuilder;
+    shaderProgramBuilder.buildShader("shaders/shader.vert", GL_VERTEX_SHADER);
+    shaderProgramBuilder.buildShader("shaders/shader.frag", GL_FRAGMENT_SHADER);
+    m_simpleShader = shaderProgramBuilder.getResult();
+
+    if (m_simpleShader == nullptr) {
         std::cerr << "Shaders could not be loaded." << std::endl;
         return false;
     }

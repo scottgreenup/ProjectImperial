@@ -5,81 +5,51 @@
 
 #include "shaderprogram.h"
 
-Shader::Shader(const char* vertFilename, const char* fragFilename)
- : m_vertFilename(vertFilename)
- , m_fragFilename(fragFilename) {
+ShaderProgram::ShaderProgram(GLuint programId)
+: m_programId(programId) {
 
 }
 
-bool Shader::Load() {
-    GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
+ShaderProgram::~ShaderProgram() {
+    glDeleteProgram(this->m_programId);
+}
 
-    // get .vert code
-    std::string vertCode;
-    std::ifstream vertStream(this->m_vertFilename, std::ios::in);
-    if (!vertStream.is_open()) {
-        std::cerr << "Could not open " << this->m_vertFilename << "." << std::endl;
-        return false;
+void ShaderProgram::use() {
+    glUseProgram(this->m_programId);
+}
+
+GLuint ShaderProgram::id() {
+    return this->m_programId;
+}
+
+//##############################################################################
+// ShaderProgram::Builder
+//##############################################################################
+
+ShaderProgram::Builder::Builder()
+: m_shaderProgram(nullptr) {
+
+}
+
+ShaderProgram::Builder::~Builder() {
+    for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
+        glDeleteShader(*it);
     }
-    std::string line = "";
-    while (getline(vertStream, line)) {
-        vertCode += "\n" + line;
-    }
-    vertStream.close();
+}
 
-    // get .frag code
-    std::string fragCode;
-    std::ifstream fragStream(this->m_fragFilename, std::ios::in);
-    if (!fragStream.is_open()) {
-        std::cerr << "Could not open " << this->m_fragFilename << "." << std::endl;
-        return false;
-    }
-    line = "";
-    while (getline(fragStream, line)) {
-        fragCode += "\n" + line;
-    }
-    fragStream.close();
-
-    GLint result = GL_FALSE;
-    int infoLogLength;
-
-    // compile .vert
-    char const* vertSource = vertCode.c_str();
-    glShaderSource(vertId, 1, &vertSource, NULL);
-    glCompileShader(vertId);
-
-    // check .vert
-    glGetShaderiv(vertId, GL_COMPILE_STATUS, &result);
-    glGetShaderiv(vertId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0) {
-        std::vector<char> vertErrMessage(infoLogLength + 1);
-        glGetShaderInfoLog(vertId, infoLogLength, NULL, &vertErrMessage[0]);
-        std::cerr << &vertErrMessage[0] << std::endl;
-    }
-
-    // compile .frag
-    char const* fragSource = fragCode.c_str();
-    glShaderSource(fragId, 1, &fragSource, NULL);
-    glCompileShader(fragId);
-
-    // check .vert
-    glGetShaderiv(fragId, GL_COMPILE_STATUS, &result);
-    glGetShaderiv(fragId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0) {
-        std::vector<char> fragErrMessage(infoLogLength + 1);
-        glGetShaderInfoLog(fragId, infoLogLength, NULL, &fragErrMessage[0]);
-        std::cerr << &fragErrMessage[0] << std::endl;
-    }
-
-    // link the program
+ShaderProgram* ShaderProgram::Builder::getResult() {
     GLuint programId = glCreateProgram();
-    glAttachShader(programId, vertId);
-    glAttachShader(programId, fragId);
+
+    for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
+        glAttachShader(programId, *it);
+    }
+
     glLinkProgram(programId);
 
     // check program
-    glGetProgramiv(programId, GL_LINK_STATUS, &result);
+    GLint result = GL_FALSE;
+    int infoLogLength;
+
     glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if (infoLogLength > 0) {
         std::vector<char> message(infoLogLength + 1);
@@ -87,22 +57,51 @@ bool Shader::Load() {
         std::cerr << &message[0] << std::endl;
     }
 
-    glDeleteShader(vertId);
-    glDeleteShader(fragId);
+    glGetProgramiv(programId, GL_LINK_STATUS, &result);
+    if (result == GL_FALSE) {
+        return nullptr;
+    }
 
-    this->m_programId = programId;
-
-    return true;
+    return (new ShaderProgram(programId));
 }
 
-Shader::~Shader() {
-    glDeleteProgram(this->m_programId);
-}
+void ShaderProgram::Builder::buildShader(const char* fileName, GLuint shaderType) {
+    GLuint shaderId = glCreateShader(shaderType);
 
-void Shader::Use() {
-    glUseProgram(this->m_programId);
-}
+    // get shader code
+    std::string code;
+    std::ifstream codeStream(fileName, std::ios::in);
+    if (!codeStream.is_open()) {
+        std::cerr << "Could not open " << fileName << "." << std::endl;
+        return;
+    }
+    std::string line = "";
+    while (getline(codeStream, line)) {
+        code += "\n" + line;
+    }
+    codeStream.close();
 
-GLuint Shader::Id() {
-    return this->m_programId;
+    // error variables that are passed by reference
+    GLint result = GL_FALSE;
+    int infoLogLength = 0;
+
+    // compile code
+    char const* source = code.c_str();
+    glShaderSource(shaderId, 1, &source, NULL);
+    glCompileShader(shaderId);
+
+    // check compilation
+    glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+    if (infoLogLength > 0)  {
+        std::vector<char> errMessage(infoLogLength + 1);
+        glGetShaderInfoLog(shaderId, infoLogLength, NULL, &errMessage[0]);
+        std::cerr << &errMessage[0] << std::endl;
+    }
+
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
+    if (result == GL_FALSE) {
+        return;
+    }
+
+    m_shaders.push_back(shaderId);
 }

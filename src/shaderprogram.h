@@ -1,28 +1,42 @@
 #ifndef _SHADERPROGRAM_HPP_
 #define _SHADERPROGRAM_HPP_
 
+#include <vector>
+
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-class Shader {
+class ShaderProgram {
 public:
-    Shader(const char* vertFilename, const char* fragFilename);
-    ~Shader();
+    class Builder;
 
-    bool Load();
-    void Use();
-    GLuint Id();
+    ShaderProgram(GLuint programId);
+    ~ShaderProgram();
+
+    void use();
+    GLuint id();
 
 private:
-    Shader();
-    Shader(const Shader& copy) { (void)copy; }
-    //Shader& operator = (const Shader& right) { (void)right; }
+    ShaderProgram(const ShaderProgram& copy)             = delete;
+    ShaderProgram& operator=(const ShaderProgram& right) = delete;
     
-    const char* m_vertFilename;
-    const char* m_fragFilename;
-
     GLuint m_programId;
+};
+
+class ShaderProgram::Builder {
+public:
+    Builder();
+    ~Builder();
+
+    void buildShader(const char* fileName, GLuint shadertype);
+
+    ShaderProgram* getResult();
+
+private:
+    ShaderProgram* m_shaderProgram;
+
+    std::vector<GLuint> m_shaders;
 };
 
 #endif
