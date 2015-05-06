@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -50,12 +51,30 @@ CenterMatrix::CenterMatrix(float size)
         GL_STATIC_DRAW   // how it will be used
     );
 
+    /*
     glGenBuffers(1, &this->m_colorBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glBufferData(
         GL_ARRAY_BUFFER,
         sizeof(GLfloat) * 18,
         colors,
+        GL_STATIC_DRAW
+    );
+    */
+
+    GLfloat normals[18];
+    for (unsigned int i = 0; i < 6; i++) {
+        normals[3 * i + 0] = 1.0f;
+        normals[3 * i + 1] = 0.0f;
+        normals[3 * i + 2] = 1.0f;
+    }
+
+    glGenBuffers(1, &this->m_normalBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_normalBufferId);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(GLfloat) * 18,
+        normals,
         GL_STATIC_DRAW
     );
 }
@@ -68,16 +87,32 @@ CenterMatrix::~CenterMatrix() {
 void CenterMatrix::Render() {
     this->m_shader->Use();
 
-    GLuint matrixId = glGetUniformLocation(this->m_shader->Id(), "MVP");
-    glUniformMatrix4fv(matrixId, 1, GL_FALSE, &MVP()[0][0]);
+    GLuint modelViewId  = glGetUniformLocation(this->m_shader->Id(), "modelView");
+    GLuint normalId     = glGetUniformLocation(this->m_shader->Id(), "normalMatrix");
+    GLuint projectionId = glGetUniformLocation(this->m_shader->Id(), "projection");
+    GLuint colorId      = glGetUniformLocation(this->m_shader->Id(), "solidColor");
+
+    glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &ModelView()[0][0]);
+    glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
+    glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
+
+
+    GLuint fogColorId   = glGetUniformLocation(m_shader->Id(), "fogParams.color");
+    GLuint fogStartId   = glGetUniformLocation(m_shader->Id(), "fogParams.start");
+    GLuint fogEndId     = glGetUniformLocation(m_shader->Id(), "fogParams.end");
+    GLuint fogDensityId = glGetUniformLocation(m_shader->Id(), "fogParams.density");
+
+    glUniform1f(fogStartId, 10.0f);
+    glUniform1f(fogEndId, 500.0f);
+    glUniform1f(fogDensityId, 0.05f);
+    glUniform4f(fogColorId, 0.7f, 0.7f, 0.7f, 1.0f);
+
+    glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+    glUniform3fv(colorId, 1, glm::value_ptr(color));
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
-
-    // bind to our buffer object
     glBindBuffer(GL_ARRAY_BUFFER, this->m_bufferId);
-
-    // meta data for the vertices
     glVertexAttribPointer(
         0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
         3,                  // size
@@ -88,7 +123,7 @@ void CenterMatrix::Render() {
     );
 
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_normalBufferId);
     glVertexAttribPointer(
         1,
         3,
