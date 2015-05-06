@@ -18,7 +18,7 @@
 
 #include "primitive.h"
 #include "camera.h"
-#include "shader.h"
+#include "shaderprogram.h"
 #include "cube.h"
 
 #include "centermatrix.h"
@@ -78,11 +78,13 @@ bool App::Initialise() {
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     // create our shaders
-    this->m_simpleShader = new Shader(
-        "shaders/shader.vert",
-        "shaders/shader.frag"
-    );
-    if (!this->m_simpleShader->Load()) {
+    
+    ShaderProgram::Builder shaderProgramBuilder;
+    shaderProgramBuilder.buildShader("shaders/shader.vert", GL_VERTEX_SHADER);
+    shaderProgramBuilder.buildShader("shaders/shader.frag", GL_FRAGMENT_SHADER);
+    m_simpleShader = shaderProgramBuilder.getResult();
+
+    if (m_simpleShader == nullptr) {
         std::cerr << "Shaders could not be loaded." << std::endl;
         return false;
     }
@@ -136,8 +138,13 @@ bool App::Initialise() {
     m_myPrev = my;
     m_mxPrev = mx;
 
+    ShaderProgram::Builder shaderColorBuilder;
+    shaderColorBuilder.buildShader("shaders/color.vert", GL_VERTEX_SHADER);
+    shaderColorBuilder.buildShader("shaders/color.frag", GL_FRAGMENT_SHADER);
+    ShaderProgram* colorShader= shaderColorBuilder.getResult();
+
     m_matrix = new CenterMatrix(2.0f);
-    m_matrix->AttachShader(this->m_simpleShader);
+    m_matrix->AttachShader(colorShader);
     m_matrix->position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     return true;

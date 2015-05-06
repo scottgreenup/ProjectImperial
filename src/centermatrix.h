@@ -16,16 +16,17 @@ public:
 
     virtual void Render();
 
-    void AttachShader(class Shader* shader) {
+    void AttachShader(class ShaderProgram* shader) {
         this->m_shader = shader;
     }
 
 protected:
-    class Shader* m_shader;
+    class ShaderProgram* m_shader;
 
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
     GLuint m_normalBufferId;
+    GLuint m_colorBufferId;
 
 private:
     CenterMatrix(const CenterMatrix& copy) = delete;
