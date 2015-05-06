@@ -156,4 +156,5 @@ void Primitive::Render() {
     }
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 }

@@ -7,7 +7,6 @@ uniform struct FogParameters {
     float start;
     float end;
     float density;
-
 } fogParams;
 
 float GetFogFactor(FogParameters p, float coord) {
@@ -15,7 +14,6 @@ float GetFogFactor(FogParameters p, float coord) {
     result = 1.0 - clamp(result, 0.0, 1.0);
     return result;
 }
-
 
 smooth in vec3 fragNormal;
 smooth in vec3 fragColor;
@@ -30,6 +28,7 @@ void main() {
 
     float diffuse = max(0.0, dot(normalize(fragNormal), -vDirection));
     color = vec4(fragColor, 1.0) * vec4(vColor * (intensity + diffuse), 1.0);
+    //color = vec4(fragColor, 1.0);
 
     float fogCoord = abs(fragModelView.z / fragModelView.w);
     color = mix(color, fogParams.color, GetFogFactor(fogParams, fogCoord));

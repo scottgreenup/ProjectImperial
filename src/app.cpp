@@ -217,8 +217,6 @@ void App::Render() {
 
     m_matrix->Render();
 
-
-
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
             for (int k = 0; k < m_cubeCount; k++) {
