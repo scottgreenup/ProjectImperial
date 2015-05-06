@@ -26,7 +26,6 @@ CenterMatrix::CenterMatrix(float size)
         0.0f, 0.0f, size,
     };
 
-    /*
     GLfloat colors[] = {
         1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,
@@ -35,7 +34,6 @@ CenterMatrix::CenterMatrix(float size)
         0.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
     };
-    */
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -53,7 +51,6 @@ CenterMatrix::CenterMatrix(float size)
         GL_STATIC_DRAW   // how it will be used
     );
 
-    /*
     glGenBuffers(1, &this->m_colorBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glBufferData(
@@ -62,8 +59,8 @@ CenterMatrix::CenterMatrix(float size)
         colors,
         GL_STATIC_DRAW
     );
-    */
 
+    /*
     GLfloat normals[18];
     for (unsigned int i = 0; i < 6; i++) {
         normals[3 * i + 0] = 1.0f;
@@ -79,6 +76,7 @@ CenterMatrix::CenterMatrix(float size)
         normals,
         GL_STATIC_DRAW
     );
+    */
 }
 
 CenterMatrix::~CenterMatrix() {
@@ -98,19 +96,10 @@ void CenterMatrix::Render() {
     glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
     glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
 
-
-    GLuint fogColorId   = glGetUniformLocation(m_shader->id(), "fogParams.color");
-    GLuint fogStartId   = glGetUniformLocation(m_shader->id(), "fogParams.start");
-    GLuint fogEndId     = glGetUniformLocation(m_shader->id(), "fogParams.end");
-    GLuint fogDensityId = glGetUniformLocation(m_shader->id(), "fogParams.density");
-
-    glUniform1f(fogStartId, 10.0f);
-    glUniform1f(fogEndId, 500.0f);
-    glUniform1f(fogDensityId, 0.05f);
-    glUniform4f(fogColorId, 0.7f, 0.7f, 0.7f, 1.0f);
-
+    /*
     glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
     glUniform3fv(colorId, 1, glm::value_ptr(color));
+    */
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
@@ -125,7 +114,7 @@ void CenterMatrix::Render() {
     );
 
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_normalBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_colorBufferId);
     glVertexAttribPointer(
         1,
         3,

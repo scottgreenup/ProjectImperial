@@ -138,8 +138,13 @@ bool App::Initialise() {
     m_myPrev = my;
     m_mxPrev = mx;
 
+    ShaderProgram::Builder shaderColorBuilder;
+    shaderColorBuilder.buildShader("shaders/color.vert", GL_VERTEX_SHADER);
+    shaderColorBuilder.buildShader("shaders/color.frag", GL_FRAGMENT_SHADER);
+    ShaderProgram* colorShader= shaderColorBuilder.getResult();
+
     m_matrix = new CenterMatrix(2.0f);
-    m_matrix->AttachShader(this->m_simpleShader);
+    m_matrix->AttachShader(colorShader);
     m_matrix->position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     return true;

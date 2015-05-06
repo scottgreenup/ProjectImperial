@@ -26,6 +26,7 @@ protected:
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
     GLuint m_normalBufferId;
+    GLuint m_colorBufferId;
 
 private:
     CenterMatrix(const CenterMatrix& copy) = delete;

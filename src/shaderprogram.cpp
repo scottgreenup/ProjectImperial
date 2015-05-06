@@ -51,7 +51,7 @@ ShaderProgram* ShaderProgram::Builder::getResult() {
     int infoLogLength;
 
     glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0) {
+    if (infoLogLength > 1) {
         std::vector<char> message(infoLogLength + 1);
         glGetShaderInfoLog(programId, infoLogLength, NULL, &message[0]);
         std::cerr << &message[0] << std::endl;
@@ -92,9 +92,10 @@ void ShaderProgram::Builder::buildShader(const char* fileName, GLuint shaderType
 
     // check compilation
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0)  {
+    if (infoLogLength > 1)  {
         std::vector<char> errMessage(infoLogLength + 1);
         glGetShaderInfoLog(shaderId, infoLogLength, NULL, &errMessage[0]);
+        std::cerr << "[" << fileName << "]" << std::endl;
         std::cerr << &errMessage[0] << std::endl;
     }
 
