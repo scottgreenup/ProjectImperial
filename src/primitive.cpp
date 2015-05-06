@@ -13,7 +13,7 @@
 #include "color.h"
 
 #include "camera.h"
-#include "shader.h"
+#include "shaderprogram.h"
 #include "primitive.h"
 
 GLfloat* normals = nullptr;

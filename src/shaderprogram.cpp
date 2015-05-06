@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "shader.h"
+#include "shaderprogram.h"
 
 Shader::Shader(const char* vertFilename, const char* fragFilename)
  : m_vertFilename(vertFilename)

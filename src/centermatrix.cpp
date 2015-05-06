@@ -10,7 +10,7 @@
 #include "color.h"
 
 #include "camera.h"
-#include "shader.h"
+#include "shaderprogram.h"
 #include "centermatrix.h"
 
 CenterMatrix::CenterMatrix(float size)

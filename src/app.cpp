@@ -18,7 +18,7 @@
 
 #include "primitive.h"
 #include "camera.h"
-#include "shader.h"
+#include "shaderprogram.h"
 #include "cube.h"
 
 #include "centermatrix.h"

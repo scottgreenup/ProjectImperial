@@ -1,5 +1,5 @@
-#ifndef _SHADER_HPP_
-#define _SHADER_HPP_
+#ifndef _SHADERPROGRAM_HPP_
+#define _SHADERPROGRAM_HPP_
 
 #define GLFW_INCLUDE_GLU
 #include <GL/glew.h>
