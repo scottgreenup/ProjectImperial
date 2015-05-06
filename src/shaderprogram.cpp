@@ -38,6 +38,9 @@ ShaderProgram::Builder::~Builder() {
 }
 
 ShaderProgram* ShaderProgram::Builder::getResult() {
+    if (m_shaderProgram != nullptr)
+        return m_shaderProgram;
+
     GLuint programId = glCreateProgram();
 
     for (auto it = m_shaders.begin(); it != m_shaders.end(); ++it) {
@@ -62,10 +65,16 @@ ShaderProgram* ShaderProgram::Builder::getResult() {
         return nullptr;
     }
 
-    return (new ShaderProgram(programId));
+    m_shaderProgram = new ShaderProgram(programId);
+
+    return m_shaderProgram;
 }
 
 void ShaderProgram::Builder::buildShader(const char* fileName, GLuint shaderType) {
+    if (m_shaderProgram != nullptr) {
+        std::cerr << "ShaderProgram::Builder::buildShader(): You already called getResult." << std::endl;
+    }
+
     GLuint shaderId = glCreateShader(shaderType);
 
     // get shader code
