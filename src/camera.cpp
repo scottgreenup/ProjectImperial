@@ -46,7 +46,7 @@ void Camera::Update(float dt, float mxDelta, float myDelta) {
     glm::vec3 right = -glm::normalize(glm::cross(glm::vec3(0,1,0), forward));
     glm::vec3 up = -glm::normalize(glm::cross(forward, right));
 
-    float speed = 40.f;
+    float speed = 50.f;
 
     if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         speed *= 2.f;

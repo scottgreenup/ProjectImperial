@@ -8,10 +8,11 @@
 #include <glm/glm.hpp>
 
 #include "transform.h"
+#include "texture.h"
 
 class Primitive : public Transform {
 public:
-    Primitive(GLfloat* verts, unsigned int vertCount);
+    Primitive(GLfloat* verts, GLfloat* texCoords, unsigned int vertCount);
     virtual ~Primitive();
 
     virtual void Render();
@@ -31,6 +32,7 @@ protected:
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
     GLuint m_normalId;
+    GLuint m_textureCoordId;
 
     GLenum m_drawMode;
 
@@ -38,6 +40,8 @@ protected:
 
     glm::vec3 m_color;
     glm::vec3 m_outlineColor;
+
+    Texture m_texture;
 
 private:
     Primitive() = delete;

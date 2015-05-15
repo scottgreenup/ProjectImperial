@@ -11,6 +11,7 @@ int main(void) {
     while (kApp.Update()) {
         kApp.Render();
     }
+
     kApp.CleanUp();
 
     return 0;

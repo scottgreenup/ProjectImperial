@@ -18,10 +18,11 @@
 
 GLfloat* normals = nullptr;
 
-Primitive::Primitive(GLfloat* verts, unsigned int vertCount)
+Primitive::Primitive(GLfloat* verts, GLfloat* texCoords, unsigned int vertCount)
 : Transform()
 , m_drawMode(GL_TRIANGLES)
-, m_vertCount(vertCount) {
+, m_vertCount(vertCount)
+, m_texture("cube.jpg") {
 
     // generate and use a VAO
     glGenVertexArrays(1, &this->m_vertexArrayId);
@@ -80,11 +81,20 @@ Primitive::Primitive(GLfloat* verts, unsigned int vertCount)
         GL_STATIC_DRAW   // how it will be used
     );
 
+    glGenBuffers(1, &this->m_textureCoordId);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_textureCoordId);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(GLfloat) * vertCount * 2,
+        texCoords,
+        GL_STATIC_DRAW
+    );
 }
 
 Primitive::~Primitive() {
     delete normals;
 
+    glDeleteBuffers(1, &m_textureCoordId);
     glDeleteBuffers(1, &m_normalId);
     glDeleteBuffers(1, &m_bufferId);
     glDeleteVertexArrays(1, &m_vertexArrayId);
@@ -123,7 +133,7 @@ void Primitive::Render() {
     glUniform1f(fogStartId, 10.0f);
     glUniform1f(fogEndId, 500.0f);
     glUniform1f(fogDensityId, 0.05f);
-    glUniform4f(fogColorId, 0.7f, 0.7f, 0.7f, 1.0f);
+    glUniform4f(fogColorId, 0.1f, 0.1f, 0.1f, 1.0f);
 
     glBindVertexArray(this->m_vertexArrayId);
     glEnableVertexAttribArray(0);
@@ -146,10 +156,25 @@ void Primitive::Render() {
         0,                  // stride
         (void*)0            // array buffer offset
     );
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_textureCoordId);
+    glVertexAttribPointer(
+        2,                  // attribute 0.s No particular reason for 0, but must match the layout in the shader.
+        2,                  // size of each vert
+        GL_FLOAT,           // type
+        GL_TRUE,            // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // texture stuff
+    int samplerId = glGetUniformLocation(this->m_shader->id(), "tex");
+    glUniform1i(samplerId, 0);
+    m_texture.bind();
 
     glDrawArrays(m_drawMode, 0, m_vertCount);
 
-    bool draw_outline = true;
+    bool draw_outline = false;
     if (draw_outline) {
         glUniform3fv(colorId, 1, glm::value_ptr(m_outlineColor));
         glDrawArrays(GL_LINE_STRIP, 0, m_vertCount);
@@ -157,4 +182,5 @@ void Primitive::Render() {
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
 }

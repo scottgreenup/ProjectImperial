@@ -1,7 +1,7 @@
 
 CC=g++
 STD=-std=c++11
-LIBS=-lGLEW -lglfw -lGLU -lGL
+LIBS=-lGLEW -lglfw -lGLU -lGL -lfreeimage
 
 ERRORFLAGS=-Wall -Wextra  -Wparentheses -Wfloat-equal -Wshadow -Wmissing-field-initializers -Wmissing-declarations -Winline
 PEDANTIC=-pedantic
