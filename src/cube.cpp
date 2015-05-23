@@ -112,8 +112,6 @@ Cube::Cube()
 : Primitive(&verts[0], &texcoords[0], (sizeof(verts) / sizeof(GLfloat) / 3)) {
     this->SetColor(1.0f, 0.0f, 0.0f);
     this->SetOutlineColor(0.0f, 1.0f, 0.0f);
-
-    std::cout << "made cube" << std::endl;
 }
 
 Cube::~Cube() { }

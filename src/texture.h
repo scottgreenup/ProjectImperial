@@ -19,8 +19,6 @@ class Texture {
 public:
     Texture(const char* fileName)
     : m_fileName(fileName) {
-        std::cout << "Texture()" << std::endl;
-
         if (data.find(fileName) != data.end()) {
             m_textureId = data[fileName].first;
             m_samplerId = data[fileName].second;
