@@ -1,7 +1,7 @@
 
-#include "component.h"
+#include "Component.h"
 
-#include "gameobject.h"
+#include "GameObject.h"
 
 Component::Component() {
 

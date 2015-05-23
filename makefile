@@ -7,7 +7,7 @@ ERRORFLAGS=-Wall -Wextra  -Wparentheses -Wfloat-equal -Wshadow -Wmissing-field-i
 PEDANTIC=-pedantic
 FLAGS=$(ERRORFLAGS) $(PEDANTIC)
 
-SRCFILES=src/*.cpp
+SRCFILES=src/*.cc
 SRCDIR=src
 
 OUTDIR=bin

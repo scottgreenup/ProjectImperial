@@ -10,11 +10,11 @@
 #include <string>
 #include <iostream>
 
-#include "color.h"
+#include "Color.h"
 
-#include "camera.h"
-#include "shaderprogram.h"
-#include "primitive.h"
+#include "Camera.h"
+#include "ShaderProgram.h"
+#include "Primitive.h"
 
 GLfloat* normals = nullptr;
 

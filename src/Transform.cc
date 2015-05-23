@@ -1,6 +1,6 @@
-#include "camera.h"
+#include "Camera.h"
 
-#include "transform.h"
+#include "Transform.h"
 
 Transform::Transform()
 : position(glm::vec3(0.0f))

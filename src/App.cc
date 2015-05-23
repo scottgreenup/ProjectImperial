@@ -14,16 +14,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "app.h"
-
-#include "primitive.h"
-#include "camera.h"
-#include "shaderprogram.h"
-#include "cube.h"
-
-#include "centermatrix.h"
-
-#include "texture.h"
+#include "App.h"
+#include "Camera.h"
+#include "CenterMatrix.h"
+#include "Cube.h"
+#include "Primitive.h"
+#include "ShaderProgram.h"
+#include "Texture.h"
 
 App::App(int width, int height, const char* name)
  : m_WindowWidth(width)

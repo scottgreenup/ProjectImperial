@@ -7,8 +7,8 @@
 
 #include <glm/glm.hpp>
 
-#include "transform.h"
-#include "texture.h"
+#include "Transform.h"
+#include "Texture.h"
 
 class Primitive : public Transform {
 public:

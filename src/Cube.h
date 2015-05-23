@@ -1,7 +1,7 @@
 #ifndef _CUBE_HPP_
 #define _CUBE_HPP_
 
-#include "primitive.h"
+#include "Primitive.h"
 
 class Cube : public Primitive {
 public:

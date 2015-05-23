@@ -1,6 +1,6 @@
-#include "gameobject.h"
+#include "GameObject.h"
 
-#include "component.h"
+#include "Component.h"
 
 GameObject::GameObject() {
 }

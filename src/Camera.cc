@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "camera.h"
+#include "Camera.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>

@@ -7,11 +7,10 @@
 
 #include <iostream>
 
-#include "color.h"
-
-#include "camera.h"
-#include "shaderprogram.h"
-#include "centermatrix.h"
+#include "Camera.h"
+#include "CenterMatrix.h"
+#include "Color.h"
+#include "ShaderProgram.h"
 
 CenterMatrix::CenterMatrix(float size)
 : Transform()

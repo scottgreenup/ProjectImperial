@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-#include "transform.h"
+#include "Transform.h"
 
 class CenterMatrix : public Transform {
 public:
