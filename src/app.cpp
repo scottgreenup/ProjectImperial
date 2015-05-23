@@ -23,12 +23,14 @@
 
 #include "centermatrix.h"
 
+#include "texture.h"
+
 App::App(int width, int height, const char* name)
  : m_WindowWidth(width)
  , m_WindowHeight(height)
  , m_WindowName(name)
  , m_cubeCount(22)
- , m_prevTime(0)
+ , m_prevTime(0) 
  , m_currTime(0)
  , m_mxPrev(0)
  , m_myPrev(0)
@@ -72,10 +74,12 @@ bool App::Initialise() {
         std::cerr << "Failed to initialise GLEW." << std::endl;
         return false;
     }
-    glClearColor(0.7, 0.7, 0.7, 1.0);
+    glClearColor(0.1, 0.1, 0.1, 1.0);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
     glDepthFunc(GL_LESS);
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
 
     // create our shaders
     
@@ -147,6 +151,7 @@ bool App::Initialise() {
     m_matrix->AttachShader(colorShader);
     m_matrix->position = glm::vec3(0.0f, 0.0f, 0.0f);
 
+
     return true;
 }
 
@@ -178,7 +183,7 @@ bool App::Update() {
     m_myPrev = my;
 
     Camera::Get().Update(dt, mxDelta, myDelta);
-    
+
     ///* Yeah... ugly... I know...
     float speed = 0.1f;
     float sep = 4.5f + sinf(glfwGetTime()) * 1.5f;
@@ -222,7 +227,7 @@ bool App::Update() {
 void App::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_matrix->Render();
+    //m_matrix->Render();
 
     for (int i = 0; i < m_cubeCount; i++) {
         for (int j = 0; j < m_cubeCount; j++) {
@@ -230,7 +235,7 @@ void App::Render() {
 
                 int x = m_cubeCount / 2;
 
-                if (i == x && j == x && k == 0) continue;
+                //if (i == x && j == x && k == 0) continue;
 
                 this->m_cubeGrid[i][j][k].Render();
             }
