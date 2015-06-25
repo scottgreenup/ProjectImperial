@@ -8,7 +8,6 @@
 /**
  * The Transform class is the base for any object that has a position in the
  * game world.
- *
  */
 class Transform : public Component {
 public:

@@ -146,7 +146,7 @@ bool App::Initialise() {
 
     m_matrix = new CenterMatrix(2.0f);
     m_matrix->AttachShader(colorShader);
-    m_matrix->position = glm::vec3(0.0f, 0.0f, 0.0f);
+    m_matrix->getComponent<Transform>()->position = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
     return true;

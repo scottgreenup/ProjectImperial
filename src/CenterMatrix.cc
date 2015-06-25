@@ -11,10 +11,12 @@
 #include "CenterMatrix.h"
 #include "Color.h"
 #include "ShaderProgram.h"
+#include "Transform.h"
 
 CenterMatrix::CenterMatrix(float size)
-: Transform()
-, m_size(size) {
+: m_size(size) {
+
+    this->addComponent(new Transform());
 
     GLfloat verts[] = {
         0.0f, 0.0f, 0.0f,
@@ -83,7 +85,7 @@ CenterMatrix::~CenterMatrix() {
     glDeleteVertexArrays(1, &this->m_vertexArrayId);
 }
 
-void CenterMatrix::Render() {
+void CenterMatrix::render() {
     this->m_shader->use();
 
     GLuint modelViewId  = glGetUniformLocation(this->m_shader->id(), "modelView");
@@ -91,8 +93,10 @@ void CenterMatrix::Render() {
     GLuint projectionId = glGetUniformLocation(this->m_shader->id(), "projection");
     //GLuint colorId      = glGetUniformLocation(this->m_shader->id(), "solidColor");
 
-    glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &ModelView()[0][0]);
-    glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));
+    Transform *t = this->getComponent<Transform>();
+
+    glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &t->ModelView()[0][0]);
+    glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(t->Model()))[0][0]));
     glUniformMatrix4fv(projectionId, 1, GL_FALSE, &Camera::Get().GetProjectionMatrix()[0][0]);
 
     /*
@@ -128,3 +132,4 @@ void CenterMatrix::Render() {
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 }
+
