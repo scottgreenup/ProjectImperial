@@ -3,12 +3,14 @@
 
 #include <glm/glm.hpp>
 
+#include "Component.h"
+
 /**
  * The Transform class is the base for any object that has a position in the
  * game world.
  *
  */
-class Transform {
+class Transform : public Component {
 public:
 
     Transform();
@@ -16,9 +18,9 @@ public:
     Transform(const glm::vec3& pos, const glm::vec3& euler);
     Transform(const glm::vec3& pos, const glm::vec3& euler, const glm::vec3& scale);
 
-    glm::mat4 MVP();
-    glm::mat4 Model();
-    glm::mat4 ModelView();
+    glm::mat4 MVP() const;
+    glm::mat4 Model() const;
+    glm::mat4 ModelView() const;
 
     virtual ~Transform();
 

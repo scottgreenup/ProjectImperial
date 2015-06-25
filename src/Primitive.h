@@ -7,15 +7,20 @@
 
 #include <glm/glm.hpp>
 
+#include "GameObject.h"
 #include "Transform.h"
 #include "Texture.h"
 
-class Primitive : public Transform {
+// goal:
+// -- move shader into component
+// -- move mesh into component
+// -- cube can have mesh, shader, transform
+class Primitive : public GameObject {
 public:
     Primitive(GLfloat* verts, GLfloat* texCoords, unsigned int vertCount);
     virtual ~Primitive();
 
-    virtual void Render();
+    virtual void render() ;
 
     void AttachShader(class ShaderProgram* shader) {
         this->m_shader = shader;

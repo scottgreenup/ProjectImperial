@@ -27,7 +27,7 @@ App::App(int width, int height, const char* name)
  , m_WindowHeight(height)
  , m_WindowName(name)
  , m_cubeCount(22)
- , m_prevTime(0) 
+ , m_prevTime(0)
  , m_currTime(0)
  , m_mxPrev(0)
  , m_myPrev(0)
@@ -79,7 +79,7 @@ bool App::Initialise() {
     //glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
 
     // create our shaders
-    
+
     ShaderProgram::Builder shaderProgramBuilder;
     shaderProgramBuilder.buildShader("shaders/shader.vert", GL_VERTEX_SHADER);
     shaderProgramBuilder.buildShader("shaders/shader.frag", GL_FRAGMENT_SHADER);
@@ -95,9 +95,9 @@ bool App::Initialise() {
     glfwGetFramebufferSize(this->window, &width, &height);
 
     Camera::Get().SetProjectionMatrix(
-        45.0f, 
-        width / (float)height, 
-        0.1f, 
+        45.0f,
+        width / (float)height,
+        0.1f,
         1000.f
     );
 
@@ -111,7 +111,7 @@ bool App::Initialise() {
 
             for (int k = 0; k < m_cubeCount; k++) {
                 this->m_cubeGrid[i][j][k].AttachShader(this->m_simpleShader);
-                this->m_cubeGrid[i][j][k].position = glm::vec3(1.1 * i, 1.1 * k, 1.1 * j);
+                this->m_cubeGrid[i][j][k].getComponent<Transform>()->position = glm::vec3(1.1 * i, 1.1 * k, 1.1 * j);
             }
         }
     }
@@ -126,12 +126,12 @@ bool App::Initialise() {
     Camera::Get().MoveTo(000.0f, 90.0f, -1.0f);
     Camera::Get().LookAt(0.0f, 100.0f, 0.0f);
     // */
-    
+
     ///* square
     Camera::Get().MoveTo(0.0f, 0.0f, 0.0f);
     Camera::Get().LookAt(0.0f, 0.0f, 1.0f);
     // */
-    
+
     Camera::Get().SetWindow(window);
 
     double mx, my;
@@ -164,7 +164,7 @@ void App::CleanUp() {
 bool App::Update() {
     if (glfwWindowShouldClose(this->window)) {
         return false;
-    }   
+    }
 
     m_prevTime = m_currTime;
     m_currTime = glfwGetTime();
@@ -191,27 +191,30 @@ bool App::Update() {
         for (int j = 0; j < m_cubeCount; j++) {
             for (int k = 0; k < m_cubeCount; k++) {
                 float scale_size = sine * 0.8f;
-                this->m_cubeGrid[i][j][k].scale.x = scale_size;
-                this->m_cubeGrid[i][j][k].scale.y = scale_size;
-                this->m_cubeGrid[i][j][k].scale.z = scale_size;
+
+                Transform* t = m_cubeGrid[i][j][k].getComponent<Transform>();
+
+                t->scale.x = scale_size;
+                t->scale.y = scale_size;
+                t->scale.z = scale_size;
 
                 int half = m_cubeCount / 2;
                 if (i < half) {
-                    this->m_cubeGrid[i][j][k].position.x = (((i - half)) * sine * sep);
+                    t->position.x = (((i - half)) * sine * sep);
                 } else {
-                    this->m_cubeGrid[i][j][k].position.x = (((i - half)) * sine * sep);
+                    t->position.x = (((i - half)) * sine * sep);
                 }
 
                 if (j < half) {
-                    this->m_cubeGrid[i][j][k].position.z = (((j - half)) * sine * sep);
+                    t->position.z = (((j - half)) * sine * sep);
                 } else {
-                    this->m_cubeGrid[i][j][k].position.z = (((j - half)) * sine * sep);
+                    t->position.z = (((j - half)) * sine * sep);
                 }
 
-                this->m_cubeGrid[i][j][k].position.y = (k * sine * sep);
+                t->position.y = (k * sine * sep);
 
-                this->m_cubeGrid[i][j][k].eulerAngles.y = (sine * 1.5f);
-                this->m_cubeGrid[i][j][k].eulerAngles.x = (sine * 1.5f);
+                t->eulerAngles.y = (sine * 1.5f);
+                t->eulerAngles.x = (sine * 1.5f);
             }
         }
     }
@@ -230,11 +233,10 @@ void App::Render() {
         for (int j = 0; j < m_cubeCount; j++) {
             for (int k = 0; k < m_cubeCount; k++) {
 
-                int x = m_cubeCount / 2;
-
+                //int x = m_cubeCount / 2;
                 //if (i == x && j == x && k == 0) continue;
 
-                this->m_cubeGrid[i][j][k].Render();
+                this->m_cubeGrid[i][j][k].render();
             }
         }
     }
@@ -254,3 +256,4 @@ void App::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int
 void App::ErrorCallback(int error, const char* desc) {
     std::cerr << "error occured (" << error << "): " << desc << std::endl;
 }
+

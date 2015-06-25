@@ -89,7 +89,7 @@ void CenterMatrix::Render() {
     GLuint modelViewId  = glGetUniformLocation(this->m_shader->id(), "modelView");
     GLuint normalId     = glGetUniformLocation(this->m_shader->id(), "normalMatrix");
     GLuint projectionId = glGetUniformLocation(this->m_shader->id(), "projection");
-    GLuint colorId      = glGetUniformLocation(this->m_shader->id(), "solidColor");
+    //GLuint colorId      = glGetUniformLocation(this->m_shader->id(), "solidColor");
 
     glUniformMatrix4fv(modelViewId, 1, GL_FALSE, &ModelView()[0][0]);
     glUniformMatrix4fv(normalId, 1, GL_FALSE, &(glm::transpose(glm::inverse(Model()))[0][0]));

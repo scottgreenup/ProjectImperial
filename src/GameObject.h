@@ -8,26 +8,26 @@ public:
     GameObject();
     virtual ~GameObject();
 
-    void update();
-    void render();
+    virtual void update() = 0;
+    virtual void render() = 0;
 
     void addComponent(class Component* component);
 
     template<class T>
     T* getComponent() {
-    for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-        T* t = dynamic_cast<T*>(*it);
+        for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+            T* t = dynamic_cast<T*>(*it);
 
-        if (t != nullptr) {
-            return t;
+            if (t != nullptr) {
+                return t;
+            }
         }
-    }
 
-    return nullptr;
-}
+        return nullptr;
+    }
 
 private:
     std::vector<class Component*> m_components;
-}; 
+};
 
 #endif

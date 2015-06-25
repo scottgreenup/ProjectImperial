@@ -8,7 +8,7 @@ public:
     Cube();
     ~Cube();
 
-    //void Render();
+    void update() {};
 
 private:
     Cube(const Cube& copy) = delete;

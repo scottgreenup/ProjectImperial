@@ -3,7 +3,8 @@
 
 #include "GameObject.h"
 
-Component::Component() {
+Component::Component()
+: m_gameObject(nullptr) {
 
 }
 

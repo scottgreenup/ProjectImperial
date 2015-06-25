@@ -11,7 +11,6 @@ public:
     virtual ~Component();
 
     class GameObject* gameObject();
-    virtual std::string toString() = 0;
 
 private:
     class GameObject* m_gameObject;
