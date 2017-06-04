@@ -1,7 +1,8 @@
 
-#include "color.h"
+#include "Color.h"
 
 #include <cmath>
+
 
 void RGBtoHSV(float r, float g, float b, float& h, float& s, float& v) {
     

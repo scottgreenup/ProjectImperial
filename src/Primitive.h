@@ -7,14 +7,20 @@
 
 #include <glm/glm.hpp>
 
-#include "transform.h"
+#include "GameObject.h"
+#include "Transform.h"
+#include "Texture.h"
 
-class Primitive : public Transform {
+// goal:
+// -- move shader into component
+// -- move mesh into component
+// -- cube can have mesh, shader, transform
+class Primitive : public GameObject {
 public:
-    Primitive(GLfloat* verts, unsigned int vertCount);
+    Primitive(GLfloat* verts, GLfloat* texCoords, unsigned int vertCount);
     virtual ~Primitive();
 
-    virtual void Render();
+    virtual void render() ;
 
     void AttachShader(class ShaderProgram* shader) {
         this->m_shader = shader;
@@ -31,6 +37,7 @@ protected:
     GLuint m_vertexArrayId;
     GLuint m_bufferId;
     GLuint m_normalId;
+    GLuint m_textureCoordId;
 
     GLenum m_drawMode;
 
@@ -38,6 +45,8 @@ protected:
 
     glm::vec3 m_color;
     glm::vec3 m_outlineColor;
+
+    Texture m_texture;
 
 private:
     Primitive() = delete;

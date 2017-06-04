@@ -1,14 +1,14 @@
 #ifndef _CUBE_HPP_
 #define _CUBE_HPP_
 
-#include "primitive.h"
+#include "Primitive.h"
 
 class Cube : public Primitive {
 public:
     Cube();
     ~Cube();
 
-    //void Render();
+    void update() {};
 
 private:
     Cube(const Cube& copy) = delete;

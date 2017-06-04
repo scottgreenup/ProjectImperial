@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "shaderprogram.h"
+#include "ShaderProgram.h"
 
 ShaderProgram::ShaderProgram(GLuint programId)
 : m_programId(programId) {

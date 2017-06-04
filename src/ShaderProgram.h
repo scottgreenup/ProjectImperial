@@ -30,13 +30,12 @@ public:
     ~Builder();
 
     void buildShader(const char* fileName, GLuint shadertype);
-
     ShaderProgram* getResult();
 
 private:
     ShaderProgram* m_shaderProgram;
-
     std::vector<GLuint> m_shaders;
 };
 
 #endif
+

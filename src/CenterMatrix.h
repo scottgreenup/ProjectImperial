@@ -7,14 +7,15 @@
 
 #include <glm/glm.hpp>
 
-#include "transform.h"
+#include "GameObject.h"
 
-class CenterMatrix : public Transform {
+class CenterMatrix : public GameObject {
 public:
     CenterMatrix(float size);
     virtual ~CenterMatrix();
 
-    virtual void Render();
+    virtual void update() {};
+    virtual void render();
 
     void AttachShader(class ShaderProgram* shader) {
         this->m_shader = shader;
